@@ -1,5 +1,6 @@
 using FluentValidation;
 using MgFinanceiro.Application.DTOs.Categoria;
+using MgFinanceiro.Application.DTOs.Transacao;
 using MgFinanceiro.Application.Interfaces;
 using MgFinanceiro.Application.Services;
 using MgFinanceiro.Application.Validators;
@@ -25,6 +26,9 @@ builder.Services.AddFluentValidationAutoValidation();
 
 builder.Services.AddScoped<IValidator<CreateCategoriaRequest>, CreateCategoriaRequestValidator>();
 
+builder.Services.AddScoped<IValidator<CreateTransacaoRequest>, CreateTransacaoRequestValidator>();
+builder.Services.AddScoped<IValidator<UpdateTransacaoRequest>, UpdateTransacaoRequestValidator>();
+
 // Db
 builder.Services.AddDbContext<AppDbContext>(options
     => options.UseNpgsql(builder.Configuration.GetConnectionString("PostgresConnection")));
@@ -33,6 +37,8 @@ builder.Services.AddDbContext<AppDbContext>(options
 // DI
 builder.Services.AddScoped<ICategoriaRepository, CategoriaRepository>();
 builder.Services.AddScoped<ICategoriaService, CategoriaService>();
+builder.Services.AddScoped<ITransacaoRepository, TransacaoRepository>();
+builder.Services.AddScoped<ITransacaoService, TransacaoService>();
 
 var app = builder.Build();
 
