@@ -25,12 +25,12 @@ public class TransacaoRepository : ITransacaoRepository
 
         if (dataInicio.HasValue)
         {
-            query = query.Where(t => t.Data >= dataInicio.Value);
+            query = query.Where(t => t.Data >= dataInicio.Value.ToUniversalTime());
         }
 
         if (dataFim.HasValue)
         {
-            query = query.Where(t => t.Data <= dataFim.Value);
+            query = query.Where(t => t.Data <= dataFim.Value.ToUniversalTime());
         }
 
         if (categoriaId.HasValue)
