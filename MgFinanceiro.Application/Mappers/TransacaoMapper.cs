@@ -7,12 +7,13 @@ namespace MgFinanceiro.Application.Mappers;
 [Mapper(RequiredMappingStrategy = RequiredMappingStrategy.Source)]
 public partial class TransacaoMapper
 {
-    public partial Transacao CreateTransacaoRequestToTransacao(CreateTransacaoRequest request);
-    public partial Transacao UpdateTransacaoRequestToTransacao(UpdateTransacaoRequest request);
+    public static partial Transacao CreateTransacaoRequestToTransacao(CreateTransacaoRequest request);
+    public static partial Transacao UpdateTransacaoRequestToTransacao(UpdateTransacaoRequest request);
 
     [MapProperty(nameof(Transacao.Categoria.Nome), nameof(TransacaoResponseDto.CategoriaNome))]
     [MapProperty(nameof(Transacao.Categoria.Tipo), nameof(TransacaoResponseDto.CategoriaTipo))]
-    private partial TransacaoResponseDto MapTransacaoToResponse(Transacao transacao);
+    public static partial TransacaoResponseDto MapTransacaoToResponse(Transacao transacao);
 
-    public partial IEnumerable<TransacaoResponseDto> TransacoesToTransacaoResponses(IEnumerable<Transacao> transacoes);
+    public static partial IEnumerable<TransacaoResponseDto> TransacoesToTransacaoResponses(
+        IEnumerable<Transacao> transacoes);
 }

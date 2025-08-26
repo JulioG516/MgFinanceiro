@@ -10,7 +10,7 @@ public class TransacaoResponseDto
     public DateTime Data { get; set; }
     public int CategoriaId { get; set; }
     public string? CategoriaNome { get; set; }
-    public TipoCategoria? CategoriaTipo { get; set; }
+    public string? CategoriaTipo { get; set; } // Mapeia do Enum para um modo amigavel
     public string? Observacoes { get; set; }
     public DateTime DataCriacao { get; set; }
 }
