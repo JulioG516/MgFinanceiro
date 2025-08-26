@@ -1,5 +1,6 @@
 using FluentValidation;
 using MgFinanceiro.Application.DTOs.Categoria;
+using MgFinanceiro.Application.DTOs.Relatorio;
 using MgFinanceiro.Application.DTOs.Transacao;
 using MgFinanceiro.Application.Interfaces;
 using MgFinanceiro.Application.Services;
@@ -52,6 +53,7 @@ builder.Services.AddScoped<IValidator<CreateCategoriaRequest>, CreateCategoriaRe
 
 builder.Services.AddScoped<IValidator<CreateTransacaoRequest>, CreateTransacaoRequestValidator>();
 builder.Services.AddScoped<IValidator<UpdateTransacaoRequest>, UpdateTransacaoRequestValidator>();
+builder.Services.AddScoped<IValidator<RelatorioQueryDto>, RelatorioQueryValidator>();
 
 // Db
 builder.Services.AddDbContext<AppDbContext>(options
@@ -63,6 +65,9 @@ builder.Services.AddScoped<ICategoriaRepository, CategoriaRepository>();
 builder.Services.AddScoped<ICategoriaService, CategoriaService>();
 builder.Services.AddScoped<ITransacaoRepository, TransacaoRepository>();
 builder.Services.AddScoped<ITransacaoService, TransacaoService>();
+builder.Services.AddScoped<IRelatorioRepository, RelatorioRepository>();
+builder.Services.AddScoped<IRelatorioService, RelatorioService>();
+
 
 var app = builder.Build();
 
