@@ -1,31 +1,29 @@
 ﻿using FluentValidation;
 using MgFinanceiro.Application.DTOs;
+using MgFinanceiro.Application.Interfaces;
 using MgFinanceiro.Application.Mappers;
 using MgFinanceiro.Domain.Common;
 using MgFinanceiro.Domain.Interfaces;
 
 namespace MgFinanceiro.Application.Services;
 
-public class CategoriaService
+public class CategoriaService : ICategoriaService
 {
     private readonly ICategoriaRepository _categoriaRepository;
     private readonly IValidator<CreateCategoriaRequest> _validator;
-    private readonly CategoriaMapper _mapper;
 
     public CategoriaService(
         ICategoriaRepository categoriaRepository,
-        IValidator<CreateCategoriaRequest> validator,
-        CategoriaMapper mapper)
+        IValidator<CreateCategoriaRequest> validator)
     {
         _categoriaRepository = categoriaRepository;
         _validator = validator;
-        _mapper = mapper;
     }
 
     public async Task<IEnumerable<CategoriaResponseDto>> GetAllCategoriasAsync(int? tipoCategoria = null)
     {
         var categorias = await _categoriaRepository.GetAllCategorias(tipoCategoria);
-        return _mapper.CategoriasToCategoriaResponses(categorias);
+        return CategoriaMapper.CategoriasToCategoriaResponses(categorias);
     }
 
     public async Task<Result> CreateCategoriaAsync(CreateCategoriaRequest request)
@@ -37,7 +35,7 @@ public class CategoriaService
             return Result.Failure(errors);
         }
 
-        var categoria = _mapper.CreateCategoriaRequestToCategoria(request);
+        var categoria = CategoriaMapper.CreateCategoriaRequestToCategoria(request);
 
         // Verifica se já não existe uma categoria com este nome e status
         var exists = await _categoriaRepository.GetAllCategorias()
@@ -52,8 +50,8 @@ public class CategoriaService
         categoria.Ativo = true;
 
         var result = await _categoriaRepository.CreateCategoria(categoria);
-        return result.IsSuccess 
-            ? Result.Success() 
+        return result.IsSuccess
+            ? Result.Success()
             : Result.Failure(result.Error);
     }
 }
