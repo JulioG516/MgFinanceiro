@@ -1,5 +1,4 @@
-﻿using MgFinanceiro.Application.DTOs;
-using MgFinanceiro.Application.DTOs.Categoria;
+﻿using MgFinanceiro.Application.DTOs.Categoria;
 using MgFinanceiro.Domain.Entities;
 using Riok.Mapperly.Abstractions;
 
