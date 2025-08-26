@@ -13,4 +13,11 @@ public partial class CategoriaMapper
     public static partial CategoriaResponseDto CategoriaToCategoriaResponse(Categoria categoria);
 
     public static partial IEnumerable<CategoriaResponseDto> CategoriasToCategoriaResponses(IEnumerable<Categoria> categorias);
+    
+    private static TipoCategoria MapTipo(string tipo) => tipo.ToLower() switch
+    {
+        "receita" => TipoCategoria.Receita,
+        "despesa" => TipoCategoria.Despesa,
+        _ => throw new ArgumentException($"TipoCategoria inválido: {tipo}")
+    };
 }

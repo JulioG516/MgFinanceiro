@@ -11,7 +11,9 @@ public class CreateCategoriaRequestValidator : AbstractValidator<CreateCategoria
             .NotEmpty().WithMessage("O nome da categoria é obrigatório.")
             .MaximumLength(100).WithMessage("O nome da categoria não pode exceder 100 caracteres.");
 
-        RuleFor(c => c.Tipo)
-            .IsInEnum().WithMessage("O tipo de categoria deve ser válido (Receita ou Despesa).");
+        RuleFor(x => x.Tipo)
+            .Must(tipo => tipo.Equals("Receita", StringComparison.OrdinalIgnoreCase) ||
+                          tipo.Equals("Despesa", StringComparison.OrdinalIgnoreCase))
+            .WithMessage("Tipo deve ser 'Receita' ou 'Despesa'");
     }
 }

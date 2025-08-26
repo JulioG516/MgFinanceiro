@@ -3,6 +3,7 @@ using MgFinanceiro.Application.DTOs;
 using MgFinanceiro.Application.Interfaces;
 using MgFinanceiro.Application.Mappers;
 using MgFinanceiro.Domain.Common;
+using MgFinanceiro.Domain.Entities;
 using MgFinanceiro.Domain.Interfaces;
 
 namespace MgFinanceiro.Application.Services;
@@ -20,7 +21,7 @@ public class CategoriaService : ICategoriaService
         _validator = validator;
     }
 
-    public async Task<IEnumerable<CategoriaResponseDto>> GetAllCategoriasAsync(int? tipoCategoria = null)
+    public async Task<IEnumerable<CategoriaResponseDto>> GetAllCategoriasAsync(TipoCategoria? tipoCategoria = null)
     {
         var categorias = await _categoriaRepository.GetAllCategorias(tipoCategoria);
         return CategoriaMapper.CategoriasToCategoriaResponses(categorias);

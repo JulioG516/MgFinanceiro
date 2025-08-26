@@ -5,6 +5,6 @@ namespace MgFinanceiro.Domain.Interfaces;
 
 public interface ICategoriaRepository
 {
-    Task<IEnumerable<Categoria>> GetAllCategorias(int? tipoCategoria = null);
+    Task<IEnumerable<Categoria>> GetAllCategorias(TipoCategoria? tipoCategoria = null);
     Task<Result> CreateCategoria(Categoria categoria);
 }   

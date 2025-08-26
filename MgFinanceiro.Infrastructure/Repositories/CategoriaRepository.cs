@@ -15,7 +15,7 @@ public class CategoriaRepository : ICategoriaRepository
         _context = context;
     }
 
-    public async Task<IEnumerable<Categoria>> GetAllCategorias(int? tipoCategoria = null)
+    public async Task<IEnumerable<Categoria>> GetAllCategorias(TipoCategoria? tipoCategoria = null)
     {
         var query = _context.Categorias
             .AsNoTracking()
@@ -23,7 +23,7 @@ public class CategoriaRepository : ICategoriaRepository
 
         if (tipoCategoria.HasValue)
         {
-            query = query.Where(c => c.Tipo == (TipoCategoria)tipoCategoria.Value);
+            query = query.Where(c => c.Tipo == tipoCategoria.Value);
         }
 
         return await query.ToListAsync();

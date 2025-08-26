@@ -1,5 +1,6 @@
 ﻿using MgFinanceiro.Application.DTOs;
 using MgFinanceiro.Application.Interfaces;
+using MgFinanceiro.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MgFinanceiro.Controllers;
@@ -17,11 +18,12 @@ public class CategoriaController : ControllerBase
 
     [HttpGet]
     [ProducesResponseType(typeof(IEnumerable<CategoriaResponseDto>), StatusCodes.Status200OK)]
-    public async Task<IActionResult> GetAll([FromQuery] int? tipoCategoria)
+    public async Task<IActionResult> GetAll([FromQuery] TipoCategoria? tipoCategoria)
     {
         var categorias = await _categoriaService.GetAllCategoriasAsync(tipoCategoria);
         return Ok(categorias);
     }
+
 
 
     [HttpPost]
