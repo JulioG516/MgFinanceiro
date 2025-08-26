@@ -8,7 +8,9 @@ using MgFinanceiro.Domain.Interfaces;
 using MgFinanceiro.Infrastructure.Data;
 using MgFinanceiro.Infrastructure.Repositories;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Models;
 using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
+using Swashbuckle.AspNetCore.SwaggerGen;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,7 +19,29 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(opt =>
+{
+    opt.EnableAnnotations();
+
+    // Deixa os Enums mais amigavel
+    opt.SchemaGeneratorOptions = new SchemaGeneratorOptions
+    {
+        UseInlineDefinitionsForEnums = true
+    };
+
+    opt.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "MgFinanceiro - API",
+        Version = "1.0",
+        Description = "API para gerenciamento financeiro",
+        Contact = new OpenApiContact
+        {
+            Name = "Julio Gabriel",
+            Email = "juliogabriel516@gmail.com"
+        }
+    });
+});
+
 
 // Validators
 
