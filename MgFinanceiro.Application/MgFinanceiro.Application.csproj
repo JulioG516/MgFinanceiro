@@ -12,10 +12,11 @@
 
     <ItemGroup>
       <Folder Include="Common\" />
-      <Folder Include="Interfaces\" />
-      <Folder Include="Mappers\" />
-      <Folder Include="Services\" />
-      <Folder Include="Validators\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <PackageReference Include="FluentValidation" Version="12.0.0" />
+      <PackageReference Include="Riok.Mapperly" Version="4.2.1" />
     </ItemGroup>
 
 </Project>
