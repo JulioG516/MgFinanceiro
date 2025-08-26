@@ -1,6 +1,4 @@
-﻿using MgFinanceiro.Domain.Entities;
-
-namespace MgFinanceiro.Application.DTOs.Transacao;
+﻿namespace MgFinanceiro.Application.DTOs.Transacao;
 
 public class TransacaoResponseDto
 {
