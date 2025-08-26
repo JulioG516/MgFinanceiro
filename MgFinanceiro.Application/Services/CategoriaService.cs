@@ -1,5 +1,5 @@
 ﻿using FluentValidation;
-using MgFinanceiro.Application.DTOs;
+using MgFinanceiro.Application.DTOs.Categoria;
 using MgFinanceiro.Application.Interfaces;
 using MgFinanceiro.Application.Mappers;
 using MgFinanceiro.Domain.Common;

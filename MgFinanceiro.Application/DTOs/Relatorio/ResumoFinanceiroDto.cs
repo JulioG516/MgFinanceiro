@@ -1,4 +1,4 @@
-﻿namespace MgFinanceiro.Application.DTOs;
+﻿namespace MgFinanceiro.Application.DTOs.Relatorio;
 
 public record ResumoFinanceiroDto(
     decimal TotalReceitas,

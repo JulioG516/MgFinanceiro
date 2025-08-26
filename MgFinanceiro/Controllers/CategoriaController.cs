@@ -1,4 +1,4 @@
-﻿using MgFinanceiro.Application.DTOs;
+﻿using MgFinanceiro.Application.DTOs.Categoria;
 using MgFinanceiro.Application.Interfaces;
 using MgFinanceiro.Domain.Entities;
 using Microsoft.AspNetCore.Mvc;
