@@ -6,5 +6,13 @@
 	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=84aa24cc_002D96d4_002D46cf_002D8645_002Db3e7fc10694c/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="Should_Have_Error_When_PorCategoria_Query_Ano_Is_Invalid" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
   &lt;TestAncestor&gt;&#xD;
     &lt;TestId&gt;xUnit::B33A7F08-F34E-462B-B647-F13B6760B896::net8.0::MgFinanceiro.Tests.RelatorioTests.RelatorioServiceTests&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::B33A7F08-F34E-462B-B647-F13B6760B896::net8.0::MgFinanceiro.Tests.RelatorioTests.RelatorioQueryValidatorTests.Should_Have_Error_When_Ano_Is_Greater_Than_Current_Year&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::B33A7F08-F34E-462B-B647-F13B6760B896::net8.0::MgFinanceiro.Tests.RelatorioTests.RelatorioQueryValidatorTests.Should_Have_Error_When_Mes_Is_Less_Than_1&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::B33A7F08-F34E-462B-B647-F13B6760B896::net8.0::MgFinanceiro.Tests.RelatorioTests.RelatorioQueryValidatorTests.Should_Have_Error_When_Mes_Is_Invalid&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::B33A7F08-F34E-462B-B647-F13B6760B896::net8.0::MgFinanceiro.Tests.RelatorioTests.RelatorioQueryValidatorTests.Should_Have_Error_When_Mes_Is_Specified_And_Ano_Is_Null&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::B33A7F08-F34E-462B-B647-F13B6760B896::net8.0::MgFinanceiro.Tests.RelatorioTests.RelatorioQueryValidatorTests.Should_Not_Have_Error_When_Ano_And_Mes_Are_Null&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::B33A7F08-F34E-462B-B647-F13B6760B896::net8.0::MgFinanceiro.Tests.RelatorioTests.RelatorioQueryValidatorTests.Should_Not_Have_Error_When_Ano_Is_Valid_And_Mes_Is_Null&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::B33A7F08-F34E-462B-B647-F13B6760B896::net8.0::MgFinanceiro.Tests.RelatorioTests.RelatorioQueryValidatorTests.Should_Not_Have_Error_When_Ano_And_Mes_Are_Valid&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;xUnit::B33A7F08-F34E-462B-B647-F13B6760B896::net8.0::MgFinanceiro.Tests.RelatorioTests.RelatorioQueryValidatorTests.Should_Have_Multiple_Errors_When_Ano_And_Mes_Are_Invalid&lt;/TestId&gt;&#xD;
   &lt;/TestAncestor&gt;&#xD;
 &lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>
