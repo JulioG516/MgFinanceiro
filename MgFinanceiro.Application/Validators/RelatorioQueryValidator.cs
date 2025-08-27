@@ -16,5 +16,14 @@ public class RelatorioQueryValidator : AbstractValidator<RelatorioQueryDto>
         RuleFor(q => q.Mes)
             .InclusiveBetween(1, 12).When(q => q.Mes.HasValue)
             .WithMessage("O mês deve estar entre 1 e 12.");
+        
+        RuleFor(q => q)
+            .Custom((query, context) =>
+            {
+                if (!query.Ano.HasValue && query.Mes.HasValue)
+                {
+                    context.AddFailure("O ano deve ser informado quando o mês é especificado.");
+                }
+            });
     }
 }
