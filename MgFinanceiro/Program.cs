@@ -57,7 +57,7 @@ builder.Services.AddScoped<IValidator<RelatorioQueryDto>, RelatorioQueryValidato
 
 // Db
 builder.Services.AddDbContext<AppDbContext>(options
-    => options.UseNpgsql(builder.Configuration.GetConnectionString("PostgresConnection")));
+    => options.UseSqlServer(builder.Configuration.GetConnectionString("SqlServerConnection")));
 
 
 // DI
