@@ -2,7 +2,7 @@
 using MgFinanceiro.Application.DTOs.Categoria;
 using MgFinanceiro.Application.Validators;
 
-namespace MgFinanceiro.Tests.Categoria;
+namespace MgFinanceiro.Tests.CategoriaTests;
 
 public class CategoriaValidatorTests
 {

@@ -3,7 +3,7 @@ using MgFinanceiro.Application.Mappers;
 using MgFinanceiro.Domain.Entities;
 using Shouldly;
 
-namespace MgFinanceiro.Tests.Categoria;
+namespace MgFinanceiro.Tests.CategoriaTests;
 
 public class CategoriaMapperTests
 {

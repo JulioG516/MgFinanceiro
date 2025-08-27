@@ -7,7 +7,7 @@ using MgFinanceiro.Domain.Interfaces;
 using Moq;
 using Shouldly;
 
-namespace MgFinanceiro.Tests.Categoria;
+namespace MgFinanceiro.Tests.CategoriaTests;
 
 public class CategoriaServiceTests
 {
@@ -25,7 +25,7 @@ public class CategoriaServiceTests
     [Fact]
     public async Task GetAllCategoriasAsync_WithoutFilter_ReturnsAllActiveCategorias()
     {
-        var categorias = new List<Domain.Entities.Categoria>
+        var categorias = new List<Categoria>
         {
             new()
             {
@@ -54,7 +54,7 @@ public class CategoriaServiceTests
     [Fact]
     public async Task GetAllCategoriasAsync_WithTipoCategoriaFilter_ReturnsFilteredCategorias()
     {
-        var categorias = new List<Domain.Entities.Categoria>
+        var categorias = new List<Categoria>
         {
             new()
             {
@@ -79,7 +79,7 @@ public class CategoriaServiceTests
     public async Task GetAllCategoriasAsync_NoActiveCategorias_ReturnsEmptyList()
     {
         _categoriaRepositoryMock.Setup(r => r.GetAllCategorias(null))
-            .ReturnsAsync(new List<Domain.Entities.Categoria>());
+            .ReturnsAsync(new List<Categoria>());
 
         var result = (await _categoriaService.GetAllCategoriasAsync()).ToList();
 
@@ -95,14 +95,14 @@ public class CategoriaServiceTests
         _validatorMock.Setup(v => v.ValidateAsync(request, default))
             .ReturnsAsync(new FluentValidation.Results.ValidationResult());
         _categoriaRepositoryMock.Setup(r => r.GetAllCategorias(null))
-            .ReturnsAsync(new List<Domain.Entities.Categoria>());
-        _categoriaRepositoryMock.Setup(r => r.CreateCategoria(It.IsAny<Domain.Entities.Categoria>()))
+            .ReturnsAsync(new List<Categoria>());
+        _categoriaRepositoryMock.Setup(r => r.CreateCategoria(It.IsAny<Categoria>()))
             .ReturnsAsync(Result.Success());
 
         var result = await _categoriaService.CreateCategoriaAsync(request);
 
         result.IsSuccess.ShouldBeTrue();
-        _categoriaRepositoryMock.Verify(r => r.CreateCategoria(It.Is<Domain.Entities.Categoria>(c =>
+        _categoriaRepositoryMock.Verify(r => r.CreateCategoria(It.Is<Categoria>(c =>
             c.Nome == "Nova Categoria" &&
             c.Tipo == TipoCategoria.Receita &&
             c.Ativo == true &&
@@ -128,7 +128,7 @@ public class CategoriaServiceTests
         result.IsSuccess.ShouldBeFalse();
         result.Error.ShouldBe("Nome não pode ser vazio.");
         _categoriaRepositoryMock.Verify(r => r.GetAllCategorias(null), Times.Never());
-        _categoriaRepositoryMock.Verify(r => r.CreateCategoria(It.IsAny<Domain.Entities.Categoria>()), Times.Never());
+        _categoriaRepositoryMock.Verify(r => r.CreateCategoria(It.IsAny<Categoria>()), Times.Never());
         _validatorMock.Verify(v => v.ValidateAsync(request, default), Times.Once());
     }
 
@@ -139,7 +139,7 @@ public class CategoriaServiceTests
         _validatorMock.Setup(v => v.ValidateAsync(request, default))
             .ReturnsAsync(new FluentValidation.Results.ValidationResult());
         _categoriaRepositoryMock.Setup(r => r.GetAllCategorias(null))
-            .ReturnsAsync(new List<Domain.Entities.Categoria>
+            .ReturnsAsync(new List<Categoria>
             {
                 new()
                 {
@@ -153,7 +153,7 @@ public class CategoriaServiceTests
         result.IsSuccess.ShouldBeFalse();
         result.Error.ShouldBe("Já existe uma categoria ativa com este nome e tipo.");
         _categoriaRepositoryMock.Verify(r => r.GetAllCategorias(null), Times.Once());
-        _categoriaRepositoryMock.Verify(r => r.CreateCategoria(It.IsAny<Domain.Entities.Categoria>()), Times.Never());
+        _categoriaRepositoryMock.Verify(r => r.CreateCategoria(It.IsAny<Categoria>()), Times.Never());
         _validatorMock.Verify(v => v.ValidateAsync(request, default), Times.Once());
     }
 
@@ -164,8 +164,8 @@ public class CategoriaServiceTests
         _validatorMock.Setup(v => v.ValidateAsync(request, default))
             .ReturnsAsync(new FluentValidation.Results.ValidationResult());
         _categoriaRepositoryMock.Setup(r => r.GetAllCategorias(null))
-            .ReturnsAsync(new List<Domain.Entities.Categoria>());
-        _categoriaRepositoryMock.Setup(r => r.CreateCategoria(It.IsAny<Domain.Entities.Categoria>()))
+            .ReturnsAsync(new List<Categoria>());
+        _categoriaRepositoryMock.Setup(r => r.CreateCategoria(It.IsAny<Categoria>()))
             .ReturnsAsync(Result.Failure("Erro no banco de dados."));
 
         var result = await _categoriaService.CreateCategoriaAsync(request);
@@ -173,7 +173,7 @@ public class CategoriaServiceTests
         result.IsSuccess.ShouldBeFalse();
         result.Error.ShouldBe("Erro no banco de dados.");
         _categoriaRepositoryMock.Verify(r => r.GetAllCategorias(null), Times.Once());
-        _categoriaRepositoryMock.Verify(r => r.CreateCategoria(It.IsAny<Domain.Entities.Categoria>()), Times.Once());
+        _categoriaRepositoryMock.Verify(r => r.CreateCategoria(It.IsAny<Categoria>()), Times.Once());
         _validatorMock.Verify(v => v.ValidateAsync(request, default), Times.Once());
     }
 }
