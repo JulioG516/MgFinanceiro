@@ -205,4 +205,220 @@ public class TransacaoValidatorTests
         result.ShouldNotHaveAnyValidationErrors();
     }
     #endregion
+    
+    #region UpdateTransacaoRequestValidator Tests
+    [Theory]
+    [InlineData(0)]
+    [InlineData(-1)]
+    public void Should_Have_Error_When_Id_Is_Not_Greater_Than_Zero(int id)
+    {
+        var request = new UpdateTransacaoRequest
+        {
+            Id = id,
+            Descricao = "Transação",
+            Valor = 250,
+            Data = _currentDate,
+            CategoriaId = 1,
+            Observacoes = null
+        };
+
+        var result = _updateTransacaoRequestValidator.TestValidate(request);
+
+        result.ShouldHaveValidationErrorFor(t => t.Id)
+            .WithErrorMessage("O ID da transação é obrigatório.");
+    }
+    
+    [Fact]
+    public void Should_Have_Error_When_Update_Descricao_Is_Empty()
+    {
+        var request = new UpdateTransacaoRequest
+        {
+            Id = 1,
+            Descricao = "",
+            Valor = 250,
+            Data = _currentDate,
+            CategoriaId = 1,
+            Observacoes = null
+        };
+
+        var result = _updateTransacaoRequestValidator.TestValidate(request);
+
+        result.ShouldHaveValidationErrorFor(t => t.Descricao)
+            .WithErrorMessage("A descrição da transação é obrigatória.");
+    }
+    
+    [Fact]
+    public void Should_Have_Error_When_Update_Descricao_Is_Null()
+    {
+        var request = new UpdateTransacaoRequest
+        {
+            Id = 1,
+            Descricao = null!,
+            Valor = 250,
+            Data = _currentDate,
+            CategoriaId = 1,
+            Observacoes = null
+        };
+
+        var result = _updateTransacaoRequestValidator.TestValidate(request);
+
+        result.ShouldHaveValidationErrorFor(t => t.Descricao)
+            .WithErrorMessage("A descrição da transação é obrigatória.");
+    }
+    
+    [Fact]
+    public void Should_Have_Error_When_Update_Descricao_Exceeds_200_Characters()
+    {
+        var longDescricao = new string('A', 201);
+        var request = new UpdateTransacaoRequest
+        {
+            Id = 1,
+            Descricao = longDescricao,
+            Valor = 250,
+            Data = _currentDate,
+            CategoriaId = 1,
+            Observacoes = null
+        };
+
+        var result = _updateTransacaoRequestValidator.TestValidate(request);
+
+        result.ShouldHaveValidationErrorFor(t => t.Descricao)
+            .WithErrorMessage("A descrição não pode exceder 200 caracteres.");
+    }
+    [Theory]
+    [InlineData(0)]
+    [InlineData(-1)]
+    public void Should_Have_Error_When_Update_Valor_Is_Not_Greater_Than_Zero(decimal valor)
+    {
+        var request = new UpdateTransacaoRequest
+        {
+            Id = 1,
+            Descricao = "Transação",
+            Valor = valor,
+            Data = _currentDate,
+            CategoriaId = 1,
+            Observacoes = null
+        };
+
+        var result = _updateTransacaoRequestValidator.TestValidate(request);
+
+        result.ShouldHaveValidationErrorFor(t => t.Valor)
+            .WithErrorMessage("O valor da transação deve ser maior que zero.");
+    }
+    
+    [Fact]
+    public void Should_Have_Error_When_Update_Data_Is_Empty()
+    {
+        var request = new UpdateTransacaoRequest
+        {
+            Id = 1,
+            Descricao = "Transação",
+            Valor = 250,
+            Data = default,
+            CategoriaId = 1,
+            Observacoes = null
+        };
+
+        var result = _updateTransacaoRequestValidator.TestValidate(request);
+
+        result.ShouldHaveValidationErrorFor(t => t.Data)
+            .WithErrorMessage("A data da transação é obrigatória.");
+    }
+    
+    [Fact]
+    public void Should_Have_Error_When_Update_Data_Is_Future()
+    {
+        var futureDate = _currentDate.AddDays(1);
+        var request = new UpdateTransacaoRequest
+        {
+            Id = 1,
+            Descricao = "Transação",
+            Valor = 250,
+            Data = futureDate,
+            CategoriaId = 1,
+            Observacoes = null
+        };
+
+        var result = _updateTransacaoRequestValidator.TestValidate(request);
+
+        result.ShouldHaveValidationErrorFor(t => t.Data)
+            .WithErrorMessage("A data da transação não pode ser futura.");
+    }
+    
+    [Theory]
+    [InlineData(0)]
+    [InlineData(-1)]
+    public void Should_Have_Error_When_Update_CategoriaId_Is_Not_Greater_Than_Zero(int categoriaId)
+    {
+        var request = new UpdateTransacaoRequest
+        {
+            Id = 1,
+            Descricao = "Transação",
+            Valor = 250,
+            Data = _currentDate,
+            CategoriaId = categoriaId,
+            Observacoes = null
+        };
+
+        var result = _updateTransacaoRequestValidator.TestValidate(request);
+
+        result.ShouldHaveValidationErrorFor(t => t.CategoriaId)
+            .WithErrorMessage("O ID da categoria é obrigatório e deve ser válido.");
+    }
+    [Fact]
+    public void Should_Have_Error_When_Update_Observacoes_Exceeds_500_Characters()
+    {
+        var longObservacoes = new string('A', 501);
+        var request = new UpdateTransacaoRequest
+        {
+            Id = 1,
+            Descricao = "Transação",
+            Valor = 250,
+            Data = _currentDate,
+            CategoriaId = 1,
+            Observacoes = longObservacoes
+        };
+
+        var result = _updateTransacaoRequestValidator.TestValidate(request);
+
+        result.ShouldHaveValidationErrorFor(t => t.Observacoes)
+            .WithErrorMessage("As observações não podem exceder 500 caracteres.");
+    }
+    [Fact]
+    public void Should_Not_Have_Error_When_Update_Observacoes_Is_Null()
+    {
+        var request = new UpdateTransacaoRequest
+        {
+            Id = 1,
+            Descricao = "Transação",
+            Valor = 250,
+            Data = _currentDate,
+            CategoriaId = 1,
+            Observacoes = null
+        };
+
+        var result = _updateTransacaoRequestValidator.TestValidate(request);
+
+        result.ShouldNotHaveValidationErrorFor(t => t.Observacoes);
+    }
+    
+    [Fact]
+    public void Should_Not_Have_Errors_When_Update_Request_Is_Valid()
+    {
+        var request = new UpdateTransacaoRequest
+        {
+            Id = 1,
+            Descricao = "Transação válida",
+            Valor = 250,
+            Data = _currentDate,
+            CategoriaId = 1,
+            Observacoes = "Observação válida"
+        };
+
+        var result = _updateTransacaoRequestValidator.TestValidate(request);
+
+        result.IsValid.ShouldBeTrue();
+        result.ShouldNotHaveAnyValidationErrors();
+    }
+    #endregion
 }
