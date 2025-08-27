@@ -20,8 +20,9 @@ public class RelatorioServiceTests
         _queryValidatorMock = new Mock<IValidator<RelatorioQueryDto>>();
         _relatorioService = new RelatorioService(_relatorioRepositoryMock.Object, _queryValidatorMock.Object);
     }
-    
+
     #region GetRelatorioResumoAsync
+
     [Fact]
     public async Task Should_Return_Resumo_When_Ano_And_Mes_Are_Null()
     {
@@ -39,14 +40,16 @@ public class RelatorioServiceTests
 
         result.ShouldNotBeNull();
         result.IsSuccess.ShouldBeTrue();
-        var responses = result.Value.ToList();
+        var responses = result.Value!.ToList();
         responses.ShouldNotBeEmpty();
         responses.Count.ShouldBe(1);
         responses.ShouldContain(r => r.Ano == 2025 && r.Mes == 8 && r.SaldoTotal == 500.50m);
         _relatorioRepositoryMock.Verify(r => r.GetResumoAnoAtualAsync(), Times.Once());
-        _relatorioRepositoryMock.Verify(r => r.GetResumoPorPeriodoAsync(It.IsAny<int>(), It.IsAny<int?>()), Times.Never());
+        _relatorioRepositoryMock.Verify(r => r.GetResumoPorPeriodoAsync(It.IsAny<int>(), It.IsAny<int?>()),
+            Times.Never());
         _queryValidatorMock.Verify(v => v.ValidateAsync(query, default), Times.Once());
     }
+
     [Fact]
     public async Task Should_Return_Resumo_When_Ano_Is_Valid_And_Mes_Is_Null()
     {
@@ -64,7 +67,7 @@ public class RelatorioServiceTests
 
         result.ShouldNotBeNull();
         result.IsSuccess.ShouldBeTrue();
-        var responses = result.Value.ToList();
+        var responses = result.Value!.ToList();
         responses.ShouldNotBeEmpty();
         responses.Count.ShouldBe(1);
         responses.ShouldContain(r => r.Ano == 2025 && r.Mes == 8 && r.SaldoTotal == 500.50m);
@@ -72,6 +75,7 @@ public class RelatorioServiceTests
         _relatorioRepositoryMock.Verify(r => r.GetResumoAnoAtualAsync(), Times.Never());
         _queryValidatorMock.Verify(v => v.ValidateAsync(query, default), Times.Once());
     }
+
     [Fact]
     public async Task Should_Return_Resumo_When_Ano_And_Mes_Are_Valid()
     {
@@ -89,7 +93,7 @@ public class RelatorioServiceTests
 
         result.ShouldNotBeNull();
         result.IsSuccess.ShouldBeTrue();
-        var responses = result.Value.ToList();
+        var responses = result.Value!.ToList();
         responses.ShouldNotBeEmpty();
         responses.Count.ShouldBe(1);
         responses.ShouldContain(r => r.Ano == 2025 && r.Mes == 8 && r.SaldoTotal == 500.50m);
@@ -97,8 +101,32 @@ public class RelatorioServiceTests
         _relatorioRepositoryMock.Verify(r => r.GetResumoAnoAtualAsync(), Times.Never());
         _queryValidatorMock.Verify(v => v.ValidateAsync(query, default), Times.Once());
     }
+
     [Fact]
-    public async Task Should_Have_Error_When_Query_Is_Invalid()
+    public async Task Should_Have_Error_When_Query_Ano_Is_Invalid()
+    {
+        var query = new RelatorioQueryDto { Ano = null, Mes = 6 };
+        var validationResult = new FluentValidation.Results.ValidationResult(new[]
+        {
+            new FluentValidation.Results.ValidationFailure("Mes", "O ano deve ser informado quando o mês é especificado.")
+        });
+        _queryValidatorMock.Setup(v => v.ValidateAsync(query, default))
+            .ReturnsAsync(validationResult);
+
+
+        var result = await _relatorioService.GetRelatorioResumoAsync(query);
+
+        result.ShouldNotBeNull();
+        result.IsSuccess.ShouldBeFalse();
+        result.Error.ShouldContain("O ano deve ser informado quando o mês é especificado.");
+        _relatorioRepositoryMock.Verify(r => r.GetPorCategoriaAnoAtualAsync(), Times.Never());
+        _relatorioRepositoryMock.Verify(r => r.GetPorCategoriaPorPeriodoAsync(It.IsAny<int>(), It.IsAny<int?>()),
+            Times.Never());
+        _queryValidatorMock.Verify(v => v.ValidateAsync(query, default), Times.Once());
+    }
+    
+    [Fact]
+    public async Task Should_Have_Error_When_Query_Mes_Is_Invalid()
     {
         var query = new RelatorioQueryDto { Ano = 2025, Mes = 13 };
         var validationResult = new FluentValidation.Results.ValidationResult(new[]
@@ -108,17 +136,18 @@ public class RelatorioServiceTests
         _queryValidatorMock.Setup(v => v.ValidateAsync(query, default))
             .ReturnsAsync(validationResult);
 
-        
+
         var result = await _relatorioService.GetRelatorioPorCategoriaAsync(query);
-    
+
         result.ShouldNotBeNull();
         result.IsSuccess.ShouldBeFalse();
         result.Error.ShouldContain("O mês deve estar entre 1 e 12.");
         _relatorioRepositoryMock.Verify(r => r.GetPorCategoriaAnoAtualAsync(), Times.Never());
-        _relatorioRepositoryMock.Verify(r => r.GetPorCategoriaPorPeriodoAsync(It.IsAny<int>(), It.IsAny<int?>()), Times.Never());
+        _relatorioRepositoryMock.Verify(r => r.GetPorCategoriaPorPeriodoAsync(It.IsAny<int>(), It.IsAny<int?>()),
+            Times.Never());
         _queryValidatorMock.Verify(v => v.ValidateAsync(query, default), Times.Once());
     }
-    
+
     [Fact]
     public async Task Should_Return_Empty_Resumo_List_When_Repository_Returns_Empty()
     {
@@ -137,9 +166,11 @@ public class RelatorioServiceTests
         _relatorioRepositoryMock.Verify(r => r.GetResumoPorPeriodoAsync(2025, 8), Times.Once());
         _queryValidatorMock.Verify(v => v.ValidateAsync(query, default), Times.Once());
     }
-    #endregion 
-    
+
+    #endregion
+
     #region GetRelatorioPorCategoriaAsync
+
     [Fact]
     public async Task Should_Return_PorCategoria_When_Ano_And_Mes_Are_Null()
     {
@@ -165,15 +196,16 @@ public class RelatorioServiceTests
 
         result.ShouldNotBeNull();
         result.IsSuccess.ShouldBeTrue();
-        var responses = result.Value.ToList();
+        var responses = result.Value!.ToList();
         responses.ShouldNotBeEmpty();
         responses.Count.ShouldBe(1);
         responses.ShouldContain(r => r.Ano == 2025 && r.Mes == 8 && r.CategoriaId == 1 && r.CategoriaTipo == "Receita");
         _relatorioRepositoryMock.Verify(r => r.GetPorCategoriaAnoAtualAsync(), Times.Once());
-        _relatorioRepositoryMock.Verify(r => r.GetPorCategoriaPorPeriodoAsync(It.IsAny<int>(), It.IsAny<int?>()), Times.Never());
+        _relatorioRepositoryMock.Verify(r => r.GetPorCategoriaPorPeriodoAsync(It.IsAny<int>(), It.IsAny<int?>()),
+            Times.Never());
         _queryValidatorMock.Verify(v => v.ValidateAsync(query, default), Times.Once());
     }
-    
+
     [Fact]
     public async Task Should_Return_PorCategoria_When_Ano_Is_Valid_And_Mes_Is_Null()
     {
@@ -199,7 +231,7 @@ public class RelatorioServiceTests
 
         result.ShouldNotBeNull();
         result.IsSuccess.ShouldBeTrue();
-        var responses = result.Value.ToList();
+        var responses = result.Value!.ToList();
         responses.ShouldNotBeEmpty();
         responses.Count.ShouldBe(1);
         responses.ShouldContain(r => r.Ano == 2025 && r.Mes == 8 && r.CategoriaId == 1 && r.CategoriaTipo == "Receita");
@@ -207,7 +239,7 @@ public class RelatorioServiceTests
         _relatorioRepositoryMock.Verify(r => r.GetPorCategoriaAnoAtualAsync(), Times.Never());
         _queryValidatorMock.Verify(v => v.ValidateAsync(query, default), Times.Once());
     }
-    
+
     [Fact]
     public async Task Should_Return_PorCategoria_When_Ano_And_Mes_Are_Valid()
     {
@@ -233,7 +265,7 @@ public class RelatorioServiceTests
 
         result.ShouldNotBeNull();
         result.IsSuccess.ShouldBeTrue();
-        var responses = result.Value.ToList();
+        var responses = result.Value!.ToList();
         responses.ShouldNotBeEmpty();
         responses.Count.ShouldBe(1);
         responses.ShouldContain(r => r.Ano == 2025 && r.Mes == 8 && r.CategoriaId == 1 && r.CategoriaTipo == "Receita");
@@ -241,9 +273,31 @@ public class RelatorioServiceTests
         _relatorioRepositoryMock.Verify(r => r.GetPorCategoriaAnoAtualAsync(), Times.Never());
         _queryValidatorMock.Verify(v => v.ValidateAsync(query, default), Times.Once());
     }
-    
+
     [Fact]
-    public async Task Should_Have_Error_When_PorCategoria_Query_Is_Invalid()
+    public async Task Should_Have_Error_When_PorCategoria_Query_Ano_Is_Invalid()
+    {
+        var query = new RelatorioQueryDto { Ano = null, Mes = 12 };
+        var validationResult = new FluentValidation.Results.ValidationResult(new[]
+        {
+            new FluentValidation.Results.ValidationFailure("Ano, Mes", "O ano deve ser informado quando o mês é especificado.")
+        });
+        _queryValidatorMock.Setup(v => v.ValidateAsync(query, default))
+            .ReturnsAsync(validationResult);
+
+
+        var result = await _relatorioService.GetRelatorioPorCategoriaAsync(query);
+        result.ShouldNotBeNull();
+        result.IsSuccess.ShouldBeFalse();
+        result.Error.ShouldContain("O ano deve ser informado quando o mês é especificado.");
+        _relatorioRepositoryMock.Verify(r => r.GetPorCategoriaAnoAtualAsync(), Times.Never());
+        _relatorioRepositoryMock.Verify(r => r.GetPorCategoriaPorPeriodoAsync(It.IsAny<int>(), It.IsAny<int?>()),
+            Times.Never());
+        _queryValidatorMock.Verify(v => v.ValidateAsync(query, default), Times.Once());
+    }
+
+    [Fact]
+    public async Task Should_Have_Error_When_PorCategoria_Query_Mes_Is_Invalid()
     {
         var query = new RelatorioQueryDto { Ano = 2025, Mes = 13 };
         var validationResult = new FluentValidation.Results.ValidationResult(new[]
@@ -255,12 +309,13 @@ public class RelatorioServiceTests
 
 
         var result = await _relatorioService.GetRelatorioPorCategoriaAsync(query);
-    
+
         result.ShouldNotBeNull();
         result.IsSuccess.ShouldBeFalse();
         result.Error.ShouldContain("O mês deve estar entre 1 e 12.");
         _relatorioRepositoryMock.Verify(r => r.GetPorCategoriaAnoAtualAsync(), Times.Never());
-        _relatorioRepositoryMock.Verify(r => r.GetPorCategoriaPorPeriodoAsync(It.IsAny<int>(), It.IsAny<int?>()), Times.Never());
+        _relatorioRepositoryMock.Verify(r => r.GetPorCategoriaPorPeriodoAsync(It.IsAny<int>(), It.IsAny<int?>()),
+            Times.Never());
         _queryValidatorMock.Verify(v => v.ValidateAsync(query, default), Times.Once());
     }
 
@@ -282,5 +337,6 @@ public class RelatorioServiceTests
         _relatorioRepositoryMock.Verify(r => r.GetPorCategoriaPorPeriodoAsync(2025, 8), Times.Once());
         _queryValidatorMock.Verify(v => v.ValidateAsync(query, default), Times.Once());
     }
+
     #endregion
 }
