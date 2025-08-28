@@ -8,7 +8,7 @@ COPY MgFinanceiro.Application/MgFinanceiro.Application.csproj MgFinanceiro.Appli
 COPY MgFinanceiro.Domain/MgFinanceiro.Domain.csproj MgFinanceiro.Domain/
 COPY MgFinanceiro.Infrastructure/MgFinanceiro.Infrastructure.csproj MgFinanceiro.Infrastructure/
 
-RUN dotnet restore
+RUN dotnet restore MgFinanceiro/MgFinanceiro.csproj
 
 COPY . .
 
