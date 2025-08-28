@@ -5,6 +5,7 @@ namespace MgFinanceiro.Infrastructure.Data;
 
 public class AppDbContext : DbContext
 {
+    public DbSet<Usuario> Usuarios { get; set; }
     public DbSet<Categoria> Categorias { get; set; }
     public DbSet<Transacao> Transacoes { get; set; }
 

@@ -57,7 +57,7 @@ namespace MgFinanceiro.Infrastructure.Data.Migrations
                         {
                             Id = 1,
                             Ativo = true,
-                            DataCriacao = new DateTime(2025, 8, 27, 0, 2, 0, 45, DateTimeKind.Utc).AddTicks(4120),
+                            DataCriacao = new DateTime(2025, 8, 28, 2, 32, 52, 874, DateTimeKind.Utc).AddTicks(1579),
                             Nome = "Vendas de Produtos",
                             Tipo = 1
                         },
@@ -65,7 +65,7 @@ namespace MgFinanceiro.Infrastructure.Data.Migrations
                         {
                             Id = 2,
                             Ativo = true,
-                            DataCriacao = new DateTime(2025, 8, 27, 0, 2, 0, 45, DateTimeKind.Utc).AddTicks(4259),
+                            DataCriacao = new DateTime(2025, 8, 28, 2, 32, 52, 874, DateTimeKind.Utc).AddTicks(1769),
                             Nome = "Prestação de Serviços",
                             Tipo = 1
                         },
@@ -73,7 +73,7 @@ namespace MgFinanceiro.Infrastructure.Data.Migrations
                         {
                             Id = 3,
                             Ativo = true,
-                            DataCriacao = new DateTime(2025, 8, 27, 0, 2, 0, 45, DateTimeKind.Utc).AddTicks(4261),
+                            DataCriacao = new DateTime(2025, 8, 28, 2, 32, 52, 874, DateTimeKind.Utc).AddTicks(1771),
                             Nome = "Juros e Rendimentos Financeiros",
                             Tipo = 1
                         },
@@ -81,7 +81,7 @@ namespace MgFinanceiro.Infrastructure.Data.Migrations
                         {
                             Id = 4,
                             Ativo = true,
-                            DataCriacao = new DateTime(2025, 8, 27, 0, 2, 0, 45, DateTimeKind.Utc).AddTicks(4263),
+                            DataCriacao = new DateTime(2025, 8, 28, 2, 32, 52, 874, DateTimeKind.Utc).AddTicks(1772),
                             Nome = "Outras Receitas Operacionais",
                             Tipo = 1
                         },
@@ -89,7 +89,7 @@ namespace MgFinanceiro.Infrastructure.Data.Migrations
                         {
                             Id = 5,
                             Ativo = true,
-                            DataCriacao = new DateTime(2025, 8, 27, 0, 2, 0, 45, DateTimeKind.Utc).AddTicks(4264),
+                            DataCriacao = new DateTime(2025, 8, 28, 2, 32, 52, 874, DateTimeKind.Utc).AddTicks(1773),
                             Nome = "Salários e Encargos",
                             Tipo = 2
                         },
@@ -97,7 +97,7 @@ namespace MgFinanceiro.Infrastructure.Data.Migrations
                         {
                             Id = 6,
                             Ativo = true,
-                            DataCriacao = new DateTime(2025, 8, 27, 0, 2, 0, 45, DateTimeKind.Utc).AddTicks(4265),
+                            DataCriacao = new DateTime(2025, 8, 28, 2, 32, 52, 874, DateTimeKind.Utc).AddTicks(1774),
                             Nome = "Aluguel e Manutenção Predial",
                             Tipo = 2
                         },
@@ -105,7 +105,7 @@ namespace MgFinanceiro.Infrastructure.Data.Migrations
                         {
                             Id = 7,
                             Ativo = true,
-                            DataCriacao = new DateTime(2025, 8, 27, 0, 2, 0, 45, DateTimeKind.Utc).AddTicks(4268),
+                            DataCriacao = new DateTime(2025, 8, 28, 2, 32, 52, 874, DateTimeKind.Utc).AddTicks(1775),
                             Nome = "Compras de Mercadorias",
                             Tipo = 2
                         },
@@ -113,7 +113,7 @@ namespace MgFinanceiro.Infrastructure.Data.Migrations
                         {
                             Id = 8,
                             Ativo = true,
-                            DataCriacao = new DateTime(2025, 8, 27, 0, 2, 0, 45, DateTimeKind.Utc).AddTicks(4269),
+                            DataCriacao = new DateTime(2025, 8, 28, 2, 32, 52, 874, DateTimeKind.Utc).AddTicks(1776),
                             Nome = "Impostos e Taxas",
                             Tipo = 2
                         },
@@ -121,7 +121,7 @@ namespace MgFinanceiro.Infrastructure.Data.Migrations
                         {
                             Id = 9,
                             Ativo = true,
-                            DataCriacao = new DateTime(2025, 8, 27, 0, 2, 0, 45, DateTimeKind.Utc).AddTicks(4270),
+                            DataCriacao = new DateTime(2025, 8, 28, 2, 32, 52, 874, DateTimeKind.Utc).AddTicks(1777),
                             Nome = "Despesas com Marketing",
                             Tipo = 2
                         },
@@ -129,7 +129,7 @@ namespace MgFinanceiro.Infrastructure.Data.Migrations
                         {
                             Id = 10,
                             Ativo = true,
-                            DataCriacao = new DateTime(2025, 8, 27, 0, 2, 0, 45, DateTimeKind.Utc).AddTicks(4271),
+                            DataCriacao = new DateTime(2025, 8, 28, 2, 32, 52, 874, DateTimeKind.Utc).AddTicks(1779),
                             Nome = "Despesas Administrativas",
                             Tipo = 2
                         });
@@ -177,8 +177,8 @@ namespace MgFinanceiro.Infrastructure.Data.Migrations
                         {
                             Id = 1,
                             CategoriaId = 1,
-                            Data = new DateTime(2025, 8, 22, 0, 2, 0, 45, DateTimeKind.Utc).AddTicks(8547),
-                            DataCriacao = new DateTime(2025, 8, 27, 0, 2, 0, 45, DateTimeKind.Utc).AddTicks(7933),
+                            Data = new DateTime(2025, 8, 23, 2, 32, 52, 874, DateTimeKind.Utc).AddTicks(6276),
+                            DataCriacao = new DateTime(2025, 8, 28, 2, 32, 52, 874, DateTimeKind.Utc).AddTicks(5763),
                             Descricao = "Venda de produtos para cliente A",
                             Valor = 1500.00m
                         },
@@ -186,8 +186,8 @@ namespace MgFinanceiro.Infrastructure.Data.Migrations
                         {
                             Id = 2,
                             CategoriaId = 2,
-                            Data = new DateTime(2025, 8, 24, 0, 2, 0, 45, DateTimeKind.Utc).AddTicks(8983),
-                            DataCriacao = new DateTime(2025, 8, 27, 0, 2, 0, 45, DateTimeKind.Utc).AddTicks(8981),
+                            Data = new DateTime(2025, 8, 25, 2, 32, 52, 874, DateTimeKind.Utc).AddTicks(6616),
+                            DataCriacao = new DateTime(2025, 8, 28, 2, 32, 52, 874, DateTimeKind.Utc).AddTicks(6614),
                             Descricao = "Prestação de serviço de consultoria",
                             Valor = 800.00m
                         },
@@ -195,8 +195,8 @@ namespace MgFinanceiro.Infrastructure.Data.Migrations
                         {
                             Id = 3,
                             CategoriaId = 5,
-                            Data = new DateTime(2025, 8, 17, 0, 2, 0, 45, DateTimeKind.Utc).AddTicks(8988),
-                            DataCriacao = new DateTime(2025, 8, 27, 0, 2, 0, 45, DateTimeKind.Utc).AddTicks(8987),
+                            Data = new DateTime(2025, 8, 18, 2, 32, 52, 874, DateTimeKind.Utc).AddTicks(6620),
+                            DataCriacao = new DateTime(2025, 8, 28, 2, 32, 52, 874, DateTimeKind.Utc).AddTicks(6619),
                             Descricao = "Pagamento de salários mensais",
                             Valor = 2000.00m
                         },
@@ -204,11 +204,42 @@ namespace MgFinanceiro.Infrastructure.Data.Migrations
                         {
                             Id = 4,
                             CategoriaId = 7,
-                            Data = new DateTime(2025, 8, 25, 0, 2, 0, 45, DateTimeKind.Utc).AddTicks(8990),
-                            DataCriacao = new DateTime(2025, 8, 27, 0, 2, 0, 45, DateTimeKind.Utc).AddTicks(8989),
+                            Data = new DateTime(2025, 8, 26, 2, 32, 52, 874, DateTimeKind.Utc).AddTicks(6621),
+                            DataCriacao = new DateTime(2025, 8, 28, 2, 32, 52, 874, DateTimeKind.Utc).AddTicks(6621),
                             Descricao = "Compra de estoque",
                             Valor = 1200.00m
                         });
+                });
+
+            modelBuilder.Entity("MgFinanceiro.Domain.Entities.Usuario", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("DataCriacao")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Nome")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SenhaHash")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("UltimoLogin")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Usuarios");
                 });
 
             modelBuilder.Entity("MgFinanceiro.Domain.Entities.Transacao", b =>
