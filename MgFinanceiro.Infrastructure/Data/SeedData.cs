@@ -15,7 +15,7 @@ public class SeedData
                 Nome = "Vendas de Produtos",
                 Tipo = TipoCategoria.Receita,
                 Ativo = true,
-                DataCriacao = DateTime.UtcNow
+                DataCriacao = new DateTime(2025, 8, 1, 0, 0, 0, DateTimeKind.Utc)
             },
             new Categoria
             {
@@ -23,7 +23,7 @@ public class SeedData
                 Nome = "Prestação de Serviços",
                 Tipo = TipoCategoria.Receita,
                 Ativo = true,
-                DataCriacao = DateTime.UtcNow
+                DataCriacao = new DateTime(2025, 8, 1, 0, 0, 0, DateTimeKind.Utc)
             },
             new Categoria
             {
@@ -31,7 +31,7 @@ public class SeedData
                 Nome = "Juros e Rendimentos Financeiros",
                 Tipo = TipoCategoria.Receita,
                 Ativo = true,
-                DataCriacao = DateTime.UtcNow
+                DataCriacao = new DateTime(2025, 8, 1, 0, 0, 0, DateTimeKind.Utc)
             },
             new Categoria
             {
@@ -39,7 +39,7 @@ public class SeedData
                 Nome = "Outras Receitas Operacionais",
                 Tipo = TipoCategoria.Receita,
                 Ativo = true,
-                DataCriacao = DateTime.UtcNow
+                DataCriacao = new DateTime(2025, 8, 1, 0, 0, 0, DateTimeKind.Utc)
             },
 
             // Despesas
@@ -49,7 +49,7 @@ public class SeedData
                 Nome = "Salários e Encargos",
                 Tipo = TipoCategoria.Despesa,
                 Ativo = true,
-                DataCriacao = DateTime.UtcNow
+                DataCriacao = new DateTime(2025, 8, 1, 0, 0, 0, DateTimeKind.Utc)
             },
             new Categoria
             {
@@ -57,7 +57,7 @@ public class SeedData
                 Nome = "Aluguel e Manutenção Predial",
                 Tipo = TipoCategoria.Despesa,
                 Ativo = true,
-                DataCriacao = DateTime.UtcNow
+                DataCriacao = new DateTime(2025, 8, 1, 0, 0, 0, DateTimeKind.Utc)
             },
             new Categoria
             {
@@ -65,7 +65,7 @@ public class SeedData
                 Nome = "Compras de Mercadorias",
                 Tipo = TipoCategoria.Despesa,
                 Ativo = true,
-                DataCriacao = DateTime.UtcNow
+                DataCriacao = new DateTime(2025, 8, 1, 0, 0, 0, DateTimeKind.Utc)
             },
             new Categoria
             {
@@ -73,7 +73,7 @@ public class SeedData
                 Nome = "Impostos e Taxas",
                 Tipo = TipoCategoria.Despesa,
                 Ativo = true,
-                DataCriacao = DateTime.UtcNow
+                DataCriacao = new DateTime(2025, 8, 1, 0, 0, 0, DateTimeKind.Utc)
             },
             new Categoria
             {
@@ -81,7 +81,7 @@ public class SeedData
                 Nome = "Despesas com Marketing",
                 Tipo = TipoCategoria.Despesa,
                 Ativo = true,
-                DataCriacao = DateTime.UtcNow
+                DataCriacao = new DateTime(2025, 8, 1, 0, 0, 0, DateTimeKind.Utc)
             },
             new Categoria
             {
@@ -89,9 +89,8 @@ public class SeedData
                 Nome = "Despesas Administrativas",
                 Tipo = TipoCategoria.Despesa,
                 Ativo = true,
-                DataCriacao = DateTime.UtcNow
+                DataCriacao = new DateTime(2025, 8, 1, 0, 0, 0, DateTimeKind.Utc)
             });
-
 
         // Seed de Transacoes
         modelBuilder.Entity<Transacao>().HasData(
@@ -100,32 +99,32 @@ public class SeedData
                 Id = 1,
                 Descricao = "Venda de produtos para cliente A",
                 Valor = 1500.00m,
-                Data = DateTime.UtcNow.AddDays(-5),
-                CategoriaId = 1,
+                Data = new DateTime(2025, 8, 23, 0, 0, 0, DateTimeKind.Utc),
+                CategoriaId = 1
             },
             new Transacao
             {
                 Id = 2,
                 Descricao = "Prestação de serviço de consultoria",
                 Valor = 800.00m,
-                Data = DateTime.UtcNow.AddDays(-3),
-                CategoriaId = 2,
+                Data = new DateTime(2025, 8, 25, 0, 0, 0, DateTimeKind.Utc),
+                CategoriaId = 2
             },
             new Transacao
             {
                 Id = 3,
                 Descricao = "Pagamento de salários mensais",
                 Valor = 2000.00m,
-                Data = DateTime.UtcNow.AddDays(-10),
-                CategoriaId = 5,
+                Data = new DateTime(2025, 8, 18, 0, 0, 0, DateTimeKind.Utc),
+                CategoriaId = 5
             },
             new Transacao
             {
                 Id = 4,
                 Descricao = "Compra de estoque",
                 Valor = 1200.00m,
-                Data = DateTime.UtcNow.AddDays(-2),
-                CategoriaId = 7,
+                Data = new DateTime(2025, 8, 26, 0, 0, 0, DateTimeKind.Utc),
+                CategoriaId = 7
             }
         );
     }
