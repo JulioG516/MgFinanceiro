@@ -178,8 +178,9 @@ namespace MgFinanceiro.Infrastructure.Data.Migrations
                             Id = 1,
                             CategoriaId = 1,
                             Data = new DateTime(2025, 8, 23, 0, 0, 0, 0, DateTimeKind.Utc),
-                            DataCriacao = new DateTime(2025, 8, 28, 14, 15, 33, 260, DateTimeKind.Utc).AddTicks(1644),
+                            DataCriacao = new DateTime(2025, 8, 28, 14, 24, 46, 444, DateTimeKind.Utc).AddTicks(1287),
                             Descricao = "Venda de produtos para cliente A",
+                            Observacoes = "Venda de 50 unidades de produto X, entrega realizada em 2 dias.",
                             Valor = 1500.00m
                         },
                         new
@@ -187,8 +188,9 @@ namespace MgFinanceiro.Infrastructure.Data.Migrations
                             Id = 2,
                             CategoriaId = 2,
                             Data = new DateTime(2025, 8, 25, 0, 0, 0, 0, DateTimeKind.Utc),
-                            DataCriacao = new DateTime(2025, 8, 28, 14, 15, 33, 260, DateTimeKind.Utc).AddTicks(2059),
+                            DataCriacao = new DateTime(2025, 8, 28, 14, 24, 46, 444, DateTimeKind.Utc).AddTicks(1808),
                             Descricao = "Prestação de serviço de consultoria",
+                            Observacoes = "Consultoria de 10 horas para otimização de processos.",
                             Valor = 800.00m
                         },
                         new
@@ -196,8 +198,9 @@ namespace MgFinanceiro.Infrastructure.Data.Migrations
                             Id = 3,
                             CategoriaId = 5,
                             Data = new DateTime(2025, 8, 18, 0, 0, 0, 0, DateTimeKind.Utc),
-                            DataCriacao = new DateTime(2025, 8, 28, 14, 15, 33, 260, DateTimeKind.Utc).AddTicks(2060),
+                            DataCriacao = new DateTime(2025, 8, 28, 14, 24, 46, 444, DateTimeKind.Utc).AddTicks(1811),
                             Descricao = "Pagamento de salários mensais",
+                            Observacoes = "Salários de 5 funcionários, pago via transferência bancária.",
                             Valor = 2000.00m
                         },
                         new
@@ -205,8 +208,9 @@ namespace MgFinanceiro.Infrastructure.Data.Migrations
                             Id = 4,
                             CategoriaId = 7,
                             Data = new DateTime(2025, 8, 26, 0, 0, 0, 0, DateTimeKind.Utc),
-                            DataCriacao = new DateTime(2025, 8, 28, 14, 15, 33, 260, DateTimeKind.Utc).AddTicks(2062),
+                            DataCriacao = new DateTime(2025, 8, 28, 14, 24, 46, 444, DateTimeKind.Utc).AddTicks(1812),
                             Descricao = "Compra de estoque",
+                            Observacoes = "Aquisição de 100 unidades de matéria-prima Y.",
                             Valor = 1200.00m
                         },
                         new
@@ -214,8 +218,9 @@ namespace MgFinanceiro.Infrastructure.Data.Migrations
                             Id = 5,
                             CategoriaId = 4,
                             Data = new DateTime(2025, 7, 10, 0, 0, 0, 0, DateTimeKind.Utc),
-                            DataCriacao = new DateTime(2025, 8, 28, 14, 15, 33, 260, DateTimeKind.Utc).AddTicks(2063),
+                            DataCriacao = new DateTime(2025, 8, 28, 14, 24, 46, 444, DateTimeKind.Utc).AddTicks(1813),
                             Descricao = "Receita de aluguel de equipamento",
+                            Observacoes = "Aluguel de máquina por 5 dias para cliente externo.",
                             Valor = 600.00m
                         },
                         new
@@ -223,7 +228,7 @@ namespace MgFinanceiro.Infrastructure.Data.Migrations
                             Id = 6,
                             CategoriaId = 6,
                             Data = new DateTime(2025, 7, 5, 0, 0, 0, 0, DateTimeKind.Utc),
-                            DataCriacao = new DateTime(2025, 8, 28, 14, 15, 33, 260, DateTimeKind.Utc).AddTicks(2064),
+                            DataCriacao = new DateTime(2025, 8, 28, 14, 24, 46, 444, DateTimeKind.Utc).AddTicks(1814),
                             Descricao = "Pagamento de aluguel mensal",
                             Valor = 900.00m
                         },
@@ -232,8 +237,9 @@ namespace MgFinanceiro.Infrastructure.Data.Migrations
                             Id = 7,
                             CategoriaId = 1,
                             Data = new DateTime(2025, 9, 12, 0, 0, 0, 0, DateTimeKind.Utc),
-                            DataCriacao = new DateTime(2025, 8, 28, 14, 15, 33, 260, DateTimeKind.Utc).AddTicks(2065),
+                            DataCriacao = new DateTime(2025, 8, 28, 14, 24, 46, 444, DateTimeKind.Utc).AddTicks(1815),
                             Descricao = "Venda de produtos para cliente B",
+                            Observacoes = "Venda de 80 unidades de produto Z, pedido urgente.",
                             Valor = 2300.00m
                         },
                         new
@@ -241,8 +247,9 @@ namespace MgFinanceiro.Infrastructure.Data.Migrations
                             Id = 8,
                             CategoriaId = 9,
                             Data = new DateTime(2025, 9, 15, 0, 0, 0, 0, DateTimeKind.Utc),
-                            DataCriacao = new DateTime(2025, 8, 28, 14, 15, 33, 260, DateTimeKind.Utc).AddTicks(2066),
+                            DataCriacao = new DateTime(2025, 8, 28, 14, 24, 46, 444, DateTimeKind.Utc).AddTicks(1817),
                             Descricao = "Campanha de marketing online",
+                            Observacoes = "Anúncios no Google Ads para promoção de produto X.",
                             Valor = 500.00m
                         },
                         new
@@ -250,8 +257,9 @@ namespace MgFinanceiro.Infrastructure.Data.Migrations
                             Id = 9,
                             CategoriaId = 3,
                             Data = new DateTime(2025, 8, 30, 0, 0, 0, 0, DateTimeKind.Utc),
-                            DataCriacao = new DateTime(2025, 8, 28, 14, 15, 33, 260, DateTimeKind.Utc).AddTicks(2067),
+                            DataCriacao = new DateTime(2025, 8, 28, 14, 24, 46, 444, DateTimeKind.Utc).AddTicks(1826),
                             Descricao = "Juros recebidos de aplicação",
+                            Observacoes = "Juros de aplicação financeira em fundo de renda fixa.",
                             Valor = 300.00m
                         },
                         new
@@ -259,7 +267,7 @@ namespace MgFinanceiro.Infrastructure.Data.Migrations
                             Id = 10,
                             CategoriaId = 8,
                             Data = new DateTime(2025, 7, 20, 0, 0, 0, 0, DateTimeKind.Utc),
-                            DataCriacao = new DateTime(2025, 8, 28, 14, 15, 33, 260, DateTimeKind.Utc).AddTicks(2078),
+                            DataCriacao = new DateTime(2025, 8, 28, 14, 24, 46, 444, DateTimeKind.Utc).AddTicks(1827),
                             Descricao = "Pagamento de impostos municipais",
                             Valor = 400.00m
                         },
@@ -268,8 +276,9 @@ namespace MgFinanceiro.Infrastructure.Data.Migrations
                             Id = 11,
                             CategoriaId = 6,
                             Data = new DateTime(2025, 6, 25, 0, 0, 0, 0, DateTimeKind.Utc),
-                            DataCriacao = new DateTime(2025, 8, 28, 14, 15, 33, 260, DateTimeKind.Utc).AddTicks(2079),
+                            DataCriacao = new DateTime(2025, 8, 28, 14, 24, 46, 444, DateTimeKind.Utc).AddTicks(1828),
                             Descricao = "Serviço de manutenção de equipamentos",
+                            Observacoes = "Manutenção preventiva de 3 máquinas industriais.",
                             Valor = 700.00m
                         },
                         new
@@ -277,8 +286,9 @@ namespace MgFinanceiro.Infrastructure.Data.Migrations
                             Id = 12,
                             CategoriaId = 1,
                             Data = new DateTime(2025, 6, 15, 0, 0, 0, 0, DateTimeKind.Utc),
-                            DataCriacao = new DateTime(2025, 8, 28, 14, 15, 33, 260, DateTimeKind.Utc).AddTicks(2080),
+                            DataCriacao = new DateTime(2025, 8, 28, 14, 24, 46, 444, DateTimeKind.Utc).AddTicks(1830),
                             Descricao = "Venda de produtos para cliente C",
+                            Observacoes = "Venda de 60 unidades de produto Y, pagamento à vista.",
                             Valor = 1800.00m
                         },
                         new
@@ -286,8 +296,9 @@ namespace MgFinanceiro.Infrastructure.Data.Migrations
                             Id = 13,
                             CategoriaId = 10,
                             Data = new DateTime(2025, 8, 10, 0, 0, 0, 0, DateTimeKind.Utc),
-                            DataCriacao = new DateTime(2025, 8, 28, 14, 15, 33, 260, DateTimeKind.Utc).AddTicks(2081),
+                            DataCriacao = new DateTime(2025, 8, 28, 14, 24, 46, 444, DateTimeKind.Utc).AddTicks(1831),
                             Descricao = "Despesas com material de escritório",
+                            Observacoes = "Compra de papel, canetas e outros suprimentos.",
                             Valor = 200.00m
                         },
                         new
@@ -295,7 +306,7 @@ namespace MgFinanceiro.Infrastructure.Data.Migrations
                             Id = 14,
                             CategoriaId = 2,
                             Data = new DateTime(2025, 9, 5, 0, 0, 0, 0, DateTimeKind.Utc),
-                            DataCriacao = new DateTime(2025, 8, 28, 14, 15, 33, 260, DateTimeKind.Utc).AddTicks(2082),
+                            DataCriacao = new DateTime(2025, 8, 28, 14, 24, 46, 444, DateTimeKind.Utc).AddTicks(1832),
                             Descricao = "Receita de consultoria estratégica",
                             Valor = 1200.00m
                         },
@@ -304,8 +315,9 @@ namespace MgFinanceiro.Infrastructure.Data.Migrations
                             Id = 15,
                             CategoriaId = 7,
                             Data = new DateTime(2025, 7, 28, 0, 0, 0, 0, DateTimeKind.Utc),
-                            DataCriacao = new DateTime(2025, 8, 28, 14, 15, 33, 260, DateTimeKind.Utc).AddTicks(2083),
+                            DataCriacao = new DateTime(2025, 8, 28, 14, 24, 46, 444, DateTimeKind.Utc).AddTicks(1833),
                             Descricao = "Compra de matérias-primas",
+                            Observacoes = "Aquisição de matéria-prima para produção de produto Z.",
                             Valor = 1500.00m
                         },
                         new
@@ -313,8 +325,9 @@ namespace MgFinanceiro.Infrastructure.Data.Migrations
                             Id = 16,
                             CategoriaId = 8,
                             Data = new DateTime(2025, 6, 30, 0, 0, 0, 0, DateTimeKind.Utc),
-                            DataCriacao = new DateTime(2025, 8, 28, 14, 15, 33, 260, DateTimeKind.Utc).AddTicks(2084),
+                            DataCriacao = new DateTime(2025, 8, 28, 14, 24, 46, 444, DateTimeKind.Utc).AddTicks(1834),
                             Descricao = "Pagamento de taxas estaduais",
+                            Observacoes = "ICMS referente a vendas do mês de junho.",
                             Valor = 350.00m
                         },
                         new
@@ -322,8 +335,9 @@ namespace MgFinanceiro.Infrastructure.Data.Migrations
                             Id = 17,
                             CategoriaId = 4,
                             Data = new DateTime(2025, 8, 5, 0, 0, 0, 0, DateTimeKind.Utc),
-                            DataCriacao = new DateTime(2025, 8, 28, 14, 15, 33, 260, DateTimeKind.Utc).AddTicks(2085),
+                            DataCriacao = new DateTime(2025, 8, 28, 14, 24, 46, 444, DateTimeKind.Utc).AddTicks(1835),
                             Descricao = "Receita de royalties",
+                            Observacoes = "Royalties de licenciamento de software proprietário.",
                             Valor = 1000.00m
                         },
                         new
@@ -331,7 +345,7 @@ namespace MgFinanceiro.Infrastructure.Data.Migrations
                             Id = 18,
                             CategoriaId = 6,
                             Data = new DateTime(2025, 9, 20, 0, 0, 0, 0, DateTimeKind.Utc),
-                            DataCriacao = new DateTime(2025, 8, 28, 14, 15, 33, 260, DateTimeKind.Utc).AddTicks(2086),
+                            DataCriacao = new DateTime(2025, 8, 28, 14, 24, 46, 444, DateTimeKind.Utc).AddTicks(1837),
                             Descricao = "Manutenção de veículos da empresa",
                             Valor = 600.00m
                         },
@@ -340,8 +354,9 @@ namespace MgFinanceiro.Infrastructure.Data.Migrations
                             Id = 19,
                             CategoriaId = 1,
                             Data = new DateTime(2025, 7, 15, 0, 0, 0, 0, DateTimeKind.Utc),
-                            DataCriacao = new DateTime(2025, 8, 28, 14, 15, 33, 260, DateTimeKind.Utc).AddTicks(2087),
+                            DataCriacao = new DateTime(2025, 8, 28, 14, 24, 46, 444, DateTimeKind.Utc).AddTicks(1838),
                             Descricao = "Venda de produtos para cliente D",
+                            Observacoes = "Venda de 100 unidades de produto X, entrega em 3 dias.",
                             Valor = 2500.00m
                         },
                         new
@@ -349,7 +364,7 @@ namespace MgFinanceiro.Infrastructure.Data.Migrations
                             Id = 20,
                             CategoriaId = 10,
                             Data = new DateTime(2025, 8, 12, 0, 0, 0, 0, DateTimeKind.Utc),
-                            DataCriacao = new DateTime(2025, 8, 28, 14, 15, 33, 260, DateTimeKind.Utc).AddTicks(2089),
+                            DataCriacao = new DateTime(2025, 8, 28, 14, 24, 46, 444, DateTimeKind.Utc).AddTicks(1839),
                             Descricao = "Despesas com treinamento de equipe",
                             Valor = 800.00m
                         });
@@ -397,7 +412,7 @@ namespace MgFinanceiro.Infrastructure.Data.Migrations
                             DataCriacao = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             Email = "teste@exemplo.com",
                             Nome = "Jose Teste",
-                            SenhaHash = "$2a$11$XCcSVqyjoEBm8AQ/gsklV.zOihn8RisCV2OVT.c7StBOaNfpRMATi"
+                            SenhaHash = "$2a$11$q4yBPFxw9Wo4G9BhzeVUVeN5BvUcrkYBcf7Lvjw6FRczlu.ie2S0W"
                         });
                 });
 
