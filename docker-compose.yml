@@ -1,0 +1,63 @@
+version: '3.8'
+
+services:
+  mgfinanceiro-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: mgfinanceiro-api
+    ports:
+      - "8080:8080"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Production
+      - ASPNETCORE_URLS=http://+:8080
+      - ConnectionStrings__SqlServerConnection=Server=sqlserver,1433;Database=MgFinanceiroDb;User Id=sa;Password=MgFinanceiroSenha123Forte;TrustServerCertificate=True;Timeout=30;ConnectRetryCount=3;ConnectRetryInterval=10
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+    networks:
+      - mgfinanceiro-network
+    restart: unless-stopped
+
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: sqlserver
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_SA_PASSWORD=MgFinanceiroSenha123Forte
+      - MSSQL_PID=Developer
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver-data:/var/opt/mssql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - mgfinanceiro-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P 'MgFinanceiroSenha123Forte' -C -Q 'SELECT 1' || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 10
+      start_period: 60s
+
+  adminer:
+    image: adminer:latest
+    container_name: adminer
+    ports:
+      - "8090:8080"
+    environment:
+      - ADMINER_DEFAULT_SERVER=sqlserver
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+    networks:
+      - mgfinanceiro-network
+    restart: unless-stopped
+
+volumes:
+  sqlserver-data:
+
+networks:
+  mgfinanceiro-network:
+    driver: bridge
