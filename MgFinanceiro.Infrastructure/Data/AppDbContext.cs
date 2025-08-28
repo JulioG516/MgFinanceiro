@@ -40,7 +40,21 @@ public class AppDbContext : DbContext
             .HasIndex(c => new { c.Nome, c.Tipo })
             .IsUnique()
             .HasFilter("Ativo = 1");
-
+        
+        modelBuilder.Entity<Usuario>()
+            .Property(c => c.Email)
+            .IsRequired()
+            .HasMaxLength(100);
+        
+        modelBuilder.Entity<Usuario>()
+            .Property(c => c.Nome)
+            .IsRequired()
+            .HasMaxLength(100);
+        
+        modelBuilder.Entity<Usuario>()
+            .HasIndex(e => e.Email)
+            .IsUnique();
+        
         SeedData.Initialize(modelBuilder);
     }
 }
