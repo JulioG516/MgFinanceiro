@@ -79,8 +79,8 @@ builder.Services.AddSwaggerGen(opt =>
             Email = "juliogabriel516@gmail.com"
         }
     });
-    
-    
+
+
     // Configuração JWT para Swagger
     opt.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
@@ -127,9 +127,15 @@ builder.Services.AddScoped<IValidator<LoginRequest>, LoginRequestValidator>();
 builder.Services.AddScoped<IValidator<UsuarioRegisterRequest>, UsuarioRegisterRequestValidator>();
 
 // Db
-builder.Services.AddDbContext<AppDbContext>(options
-    => options.UseSqlServer(builder.Configuration.GetConnectionString("SqlServerConnection")));
-
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("SqlServerConnection"),
+        sqlOptions =>
+        {
+            sqlOptions.EnableRetryOnFailure(
+                maxRetryCount: 5,
+                maxRetryDelay: TimeSpan.FromSeconds(30),
+                errorNumbersToAdd: null);
+        }));
 
 // DI
 builder.Services.AddScoped<ICategoriaRepository, CategoriaRepository>();
