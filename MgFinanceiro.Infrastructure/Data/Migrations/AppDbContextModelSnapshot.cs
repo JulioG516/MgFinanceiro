@@ -178,7 +178,7 @@ namespace MgFinanceiro.Infrastructure.Data.Migrations
                             Id = 1,
                             CategoriaId = 1,
                             Data = new DateTime(2025, 8, 23, 0, 0, 0, 0, DateTimeKind.Utc),
-                            DataCriacao = new DateTime(2025, 8, 28, 13, 40, 52, 418, DateTimeKind.Utc).AddTicks(6124),
+                            DataCriacao = new DateTime(2025, 8, 28, 14, 15, 33, 260, DateTimeKind.Utc).AddTicks(1644),
                             Descricao = "Venda de produtos para cliente A",
                             Valor = 1500.00m
                         },
@@ -187,7 +187,7 @@ namespace MgFinanceiro.Infrastructure.Data.Migrations
                             Id = 2,
                             CategoriaId = 2,
                             Data = new DateTime(2025, 8, 25, 0, 0, 0, 0, DateTimeKind.Utc),
-                            DataCriacao = new DateTime(2025, 8, 28, 13, 40, 52, 418, DateTimeKind.Utc).AddTicks(6581),
+                            DataCriacao = new DateTime(2025, 8, 28, 14, 15, 33, 260, DateTimeKind.Utc).AddTicks(2059),
                             Descricao = "Prestação de serviço de consultoria",
                             Valor = 800.00m
                         },
@@ -196,7 +196,7 @@ namespace MgFinanceiro.Infrastructure.Data.Migrations
                             Id = 3,
                             CategoriaId = 5,
                             Data = new DateTime(2025, 8, 18, 0, 0, 0, 0, DateTimeKind.Utc),
-                            DataCriacao = new DateTime(2025, 8, 28, 13, 40, 52, 418, DateTimeKind.Utc).AddTicks(6583),
+                            DataCriacao = new DateTime(2025, 8, 28, 14, 15, 33, 260, DateTimeKind.Utc).AddTicks(2060),
                             Descricao = "Pagamento de salários mensais",
                             Valor = 2000.00m
                         },
@@ -205,9 +205,153 @@ namespace MgFinanceiro.Infrastructure.Data.Migrations
                             Id = 4,
                             CategoriaId = 7,
                             Data = new DateTime(2025, 8, 26, 0, 0, 0, 0, DateTimeKind.Utc),
-                            DataCriacao = new DateTime(2025, 8, 28, 13, 40, 52, 418, DateTimeKind.Utc).AddTicks(6584),
+                            DataCriacao = new DateTime(2025, 8, 28, 14, 15, 33, 260, DateTimeKind.Utc).AddTicks(2062),
                             Descricao = "Compra de estoque",
                             Valor = 1200.00m
+                        },
+                        new
+                        {
+                            Id = 5,
+                            CategoriaId = 4,
+                            Data = new DateTime(2025, 7, 10, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DataCriacao = new DateTime(2025, 8, 28, 14, 15, 33, 260, DateTimeKind.Utc).AddTicks(2063),
+                            Descricao = "Receita de aluguel de equipamento",
+                            Valor = 600.00m
+                        },
+                        new
+                        {
+                            Id = 6,
+                            CategoriaId = 6,
+                            Data = new DateTime(2025, 7, 5, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DataCriacao = new DateTime(2025, 8, 28, 14, 15, 33, 260, DateTimeKind.Utc).AddTicks(2064),
+                            Descricao = "Pagamento de aluguel mensal",
+                            Valor = 900.00m
+                        },
+                        new
+                        {
+                            Id = 7,
+                            CategoriaId = 1,
+                            Data = new DateTime(2025, 9, 12, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DataCriacao = new DateTime(2025, 8, 28, 14, 15, 33, 260, DateTimeKind.Utc).AddTicks(2065),
+                            Descricao = "Venda de produtos para cliente B",
+                            Valor = 2300.00m
+                        },
+                        new
+                        {
+                            Id = 8,
+                            CategoriaId = 9,
+                            Data = new DateTime(2025, 9, 15, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DataCriacao = new DateTime(2025, 8, 28, 14, 15, 33, 260, DateTimeKind.Utc).AddTicks(2066),
+                            Descricao = "Campanha de marketing online",
+                            Valor = 500.00m
+                        },
+                        new
+                        {
+                            Id = 9,
+                            CategoriaId = 3,
+                            Data = new DateTime(2025, 8, 30, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DataCriacao = new DateTime(2025, 8, 28, 14, 15, 33, 260, DateTimeKind.Utc).AddTicks(2067),
+                            Descricao = "Juros recebidos de aplicação",
+                            Valor = 300.00m
+                        },
+                        new
+                        {
+                            Id = 10,
+                            CategoriaId = 8,
+                            Data = new DateTime(2025, 7, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DataCriacao = new DateTime(2025, 8, 28, 14, 15, 33, 260, DateTimeKind.Utc).AddTicks(2078),
+                            Descricao = "Pagamento de impostos municipais",
+                            Valor = 400.00m
+                        },
+                        new
+                        {
+                            Id = 11,
+                            CategoriaId = 6,
+                            Data = new DateTime(2025, 6, 25, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DataCriacao = new DateTime(2025, 8, 28, 14, 15, 33, 260, DateTimeKind.Utc).AddTicks(2079),
+                            Descricao = "Serviço de manutenção de equipamentos",
+                            Valor = 700.00m
+                        },
+                        new
+                        {
+                            Id = 12,
+                            CategoriaId = 1,
+                            Data = new DateTime(2025, 6, 15, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DataCriacao = new DateTime(2025, 8, 28, 14, 15, 33, 260, DateTimeKind.Utc).AddTicks(2080),
+                            Descricao = "Venda de produtos para cliente C",
+                            Valor = 1800.00m
+                        },
+                        new
+                        {
+                            Id = 13,
+                            CategoriaId = 10,
+                            Data = new DateTime(2025, 8, 10, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DataCriacao = new DateTime(2025, 8, 28, 14, 15, 33, 260, DateTimeKind.Utc).AddTicks(2081),
+                            Descricao = "Despesas com material de escritório",
+                            Valor = 200.00m
+                        },
+                        new
+                        {
+                            Id = 14,
+                            CategoriaId = 2,
+                            Data = new DateTime(2025, 9, 5, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DataCriacao = new DateTime(2025, 8, 28, 14, 15, 33, 260, DateTimeKind.Utc).AddTicks(2082),
+                            Descricao = "Receita de consultoria estratégica",
+                            Valor = 1200.00m
+                        },
+                        new
+                        {
+                            Id = 15,
+                            CategoriaId = 7,
+                            Data = new DateTime(2025, 7, 28, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DataCriacao = new DateTime(2025, 8, 28, 14, 15, 33, 260, DateTimeKind.Utc).AddTicks(2083),
+                            Descricao = "Compra de matérias-primas",
+                            Valor = 1500.00m
+                        },
+                        new
+                        {
+                            Id = 16,
+                            CategoriaId = 8,
+                            Data = new DateTime(2025, 6, 30, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DataCriacao = new DateTime(2025, 8, 28, 14, 15, 33, 260, DateTimeKind.Utc).AddTicks(2084),
+                            Descricao = "Pagamento de taxas estaduais",
+                            Valor = 350.00m
+                        },
+                        new
+                        {
+                            Id = 17,
+                            CategoriaId = 4,
+                            Data = new DateTime(2025, 8, 5, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DataCriacao = new DateTime(2025, 8, 28, 14, 15, 33, 260, DateTimeKind.Utc).AddTicks(2085),
+                            Descricao = "Receita de royalties",
+                            Valor = 1000.00m
+                        },
+                        new
+                        {
+                            Id = 18,
+                            CategoriaId = 6,
+                            Data = new DateTime(2025, 9, 20, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DataCriacao = new DateTime(2025, 8, 28, 14, 15, 33, 260, DateTimeKind.Utc).AddTicks(2086),
+                            Descricao = "Manutenção de veículos da empresa",
+                            Valor = 600.00m
+                        },
+                        new
+                        {
+                            Id = 19,
+                            CategoriaId = 1,
+                            Data = new DateTime(2025, 7, 15, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DataCriacao = new DateTime(2025, 8, 28, 14, 15, 33, 260, DateTimeKind.Utc).AddTicks(2087),
+                            Descricao = "Venda de produtos para cliente D",
+                            Valor = 2500.00m
+                        },
+                        new
+                        {
+                            Id = 20,
+                            CategoriaId = 10,
+                            Data = new DateTime(2025, 8, 12, 0, 0, 0, 0, DateTimeKind.Utc),
+                            DataCriacao = new DateTime(2025, 8, 28, 14, 15, 33, 260, DateTimeKind.Utc).AddTicks(2089),
+                            Descricao = "Despesas com treinamento de equipe",
+                            Valor = 800.00m
                         });
                 });
 
@@ -245,6 +389,16 @@ namespace MgFinanceiro.Infrastructure.Data.Migrations
                         .IsUnique();
 
                     b.ToTable("Usuarios");
+
+                    b.HasData(
+                        new
+                        {
+                            Id = 1,
+                            DataCriacao = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
+                            Email = "teste@exemplo.com",
+                            Nome = "Jose Teste",
+                            SenhaHash = "$2a$11$XCcSVqyjoEBm8AQ/gsklV.zOihn8RisCV2OVT.c7StBOaNfpRMATi"
+                        });
                 });
 
             modelBuilder.Entity("MgFinanceiro.Domain.Entities.Transacao", b =>
