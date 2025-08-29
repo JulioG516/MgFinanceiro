@@ -125,7 +125,7 @@ public class TransacaoServiceTests
         result.ShouldBeEmpty();
         _transacaoRepositoryMock.Verify(r => r.GetAllTransacoesAsync(null, null, null, null), Times.Once());
     }
-    
+
     [Fact]
     public async Task GetTransacaoByIdAsync_ExistingId_ReturnsTransacao()
     {
@@ -153,19 +153,19 @@ public class TransacaoServiceTests
         result.CategoriaTipo.ShouldBe("Receita");
         _transacaoRepositoryMock.Verify(r => r.GetTransacaoByIdAsync(1), Times.Once());
     }
-    
+
     [Fact]
     public async Task GetTransacaoByIdAsync_NonExistentId_ReturnsNull()
     {
         _transacaoRepositoryMock.Setup(r => r.GetTransacaoByIdAsync(999))
             .ReturnsAsync((Transacao?)null);
-        
+
         var result = await _transacaoService.GetTransacaoByIdAsync(999);
-        
+
         result.ShouldBeNull();
         _transacaoRepositoryMock.Verify(r => r.GetTransacaoByIdAsync(999), Times.Once());
     }
-    
+
     [Fact]
     public async Task CreateTransacaoAsync_ValidRequest_CreatesTransacao()
     {
@@ -177,30 +177,56 @@ public class TransacaoServiceTests
             CategoriaId = 1,
             Observacoes = "Obs"
         };
+
+        var categoria = new Categoria
+        {
+            Id = 1, Nome = "Vendas", Tipo = TipoCategoria.Receita, Ativo = true, DataCriacao = DateTime.UtcNow
+        };
+
+        var createdAt = DateTime.UtcNow;
+        var generatedTransacao = new Transacao
+        {
+            Id = 1,
+            Descricao = "Nova Transação",
+            Valor = 100.50m,
+            Data = new DateTime(2025, 8, 1),
+            CategoriaId = 1,
+            Observacoes = "Obs",
+            DataCriacao = createdAt,
+            Categoria = categoria
+        };
+
+
         _createValidatorMock.Setup(v => v.ValidateAsync(request, default))
             .ReturnsAsync(new FluentValidation.Results.ValidationResult());
-        _categoriaRepositoryMock.Setup(r => r.GetAllCategorias(null))
-            .ReturnsAsync(new List<Categoria>
-            {
-                new() { Id = 1, Nome = "Vendas", Tipo = TipoCategoria.Receita, Ativo = true, DataCriacao = DateTime.UtcNow }
-            });
+        _categoriaRepositoryMock.Setup(r => r.GetCategoriaByIdAsync(1))
+            .ReturnsAsync(categoria);
         _transacaoRepositoryMock.Setup(r => r.CreateTransacaoAsync(It.IsAny<Transacao>()))
-            .ReturnsAsync(Result.Success());
+            .ReturnsAsync(Result<Transacao>.Success(generatedTransacao));
 
         var result = await _transacaoService.CreateTransacaoAsync(request);
-
         result.IsSuccess.ShouldBeTrue();
+        result.Value.ShouldNotBeNull();
+        result.Value.Id.ShouldBe(1);
+        result.Value.Descricao.ShouldBe(request.Descricao);
+        result.Value.Valor.ShouldBe(100.50m);
+        result.Value.CategoriaId.ShouldBe(1);
+        result.Value.CategoriaNome.ShouldBe("Vendas");
+        result.Value.CategoriaTipo.ShouldBe("Receita");
+        result.Value.DataCriacao.ShouldBe(createdAt);
+        result.Value.Observacoes.ShouldBe(request.Observacoes);
+
         _transacaoRepositoryMock.Verify(r => r.CreateTransacaoAsync(It.Is<Transacao>(t =>
-            t.Descricao == "Nova Transação" &&
-            t.Valor == 100.50m &&
-            t.Data == new DateTime(2025, 8, 1) &&
-            t.CategoriaId == 1 &&
-            t.Observacoes == "Obs" &&
-            t.DataCriacao != default)), Times.Once());
-        _categoriaRepositoryMock.Verify(r => r.GetAllCategorias(null), Times.Once());
+            t.Descricao == request.Descricao &&
+            t.Valor == request.Valor &&
+            t.Data.Date == request.Data.Date &&
+            t.CategoriaId == request.CategoriaId
+        )), Times.Once());
+
+        _categoriaRepositoryMock.Verify(r => r.GetCategoriaByIdAsync(1), Times.Once());
         _createValidatorMock.Verify(v => v.ValidateAsync(request, default), Times.Once());
     }
-    
+
     [Theory]
     [InlineData("", 100.50, "2025-08-01", 1, "A descrição da transação é obrigatória.")]
     [InlineData("Nova Transação", 0, "2025-08-01", 1, "O valor da transação deve ser maior que zero.")]
@@ -227,11 +253,11 @@ public class TransacaoServiceTests
 
         result.IsSuccess.ShouldBeFalse();
         result.Error.ShouldContain(expectedError);
-        _categoriaRepositoryMock.Verify(r => r.GetAllCategorias(null), Times.Never());
+        _categoriaRepositoryMock.Verify(r => r.GetCategoriaByIdAsync(categoriaId), Times.Never());
         _transacaoRepositoryMock.Verify(r => r.CreateTransacaoAsync(It.IsAny<Transacao>()), Times.Never());
         _createValidatorMock.Verify(v => v.ValidateAsync(request, default), Times.Once());
     }
-    
+
     [Fact]
     public async Task CreateTransacaoAsync_NonExistentOrInactiveCategoria_ReturnsFailure()
     {
@@ -245,18 +271,19 @@ public class TransacaoServiceTests
         };
         _createValidatorMock.Setup(v => v.ValidateAsync(request, default))
             .ReturnsAsync(new FluentValidation.Results.ValidationResult());
-        _categoriaRepositoryMock.Setup(r => r.GetAllCategorias(null))
-            .ReturnsAsync(new List<Categoria>());
+        _categoriaRepositoryMock.Setup(r => r.GetCategoriaByIdAsync(999))
+            .ReturnsAsync((Categoria?)null);
 
         var result = await _transacaoService.CreateTransacaoAsync(request);
 
         result.IsSuccess.ShouldBeFalse();
         result.Error.ShouldBe("A categoria especificada não existe ou não está ativa.");
-        _categoriaRepositoryMock.Verify(r => r.GetAllCategorias(null), Times.Once());
+        _categoriaRepositoryMock.Verify(r => r.GetCategoriaByIdAsync(999), Times.Once());
         _transacaoRepositoryMock.Verify(r => r.CreateTransacaoAsync(It.IsAny<Transacao>()), Times.Never());
         _createValidatorMock.Verify(v => v.ValidateAsync(request, default), Times.Once());
     }
-     [Fact]
+
+    [Fact]
     public async Task UpdateTransacaoAsync_ValidRequest_UpdatesTransacao()
     {
         var request = new UpdateTransacaoRequest
@@ -282,10 +309,10 @@ public class TransacaoServiceTests
             .ReturnsAsync(new FluentValidation.Results.ValidationResult());
         _transacaoRepositoryMock.Setup(r => r.GetTransacaoByIdAsync(1))
             .ReturnsAsync(existingTransacao);
-        _categoriaRepositoryMock.Setup(r => r.GetAllCategorias(null))
-            .ReturnsAsync(new List<Categoria>
+        _categoriaRepositoryMock.Setup(r => r.GetCategoriaByIdAsync(1))
+            .ReturnsAsync(new Categoria
             {
-                new() { Id = 1, Nome = "Vendas", Tipo = TipoCategoria.Receita, Ativo = true, DataCriacao = DateTime.UtcNow }
+                Id = 1, Nome = "Vendas", Tipo = TipoCategoria.Receita, Ativo = true, DataCriacao = DateTime.UtcNow
             });
         _transacaoRepositoryMock.Setup(r => r.UpdateTransacaoAsync(It.IsAny<Transacao>()))
             .ReturnsAsync(Result.Success());
@@ -294,18 +321,19 @@ public class TransacaoServiceTests
 
         result.IsSuccess.ShouldBeTrue();
         _transacaoRepositoryMock.Verify(r => r.UpdateTransacaoAsync(It.Is<Transacao>(t =>
-            t.Id == 1 &&
-            t.Descricao == "Transação Atualizada" &&
-            t.Valor == 200.75m &&
-            t.Data == new DateTime(2025, 8, 1) &&
-            t.CategoriaId == 1 &&
-            t.Observacoes == "Obs Atualizada" &&
-            t.DataCriacao == existingTransacao.DataCriacao)), Times.Once());
+            t.Id == request.Id &&
+            t.Descricao == request.Descricao &&
+            t.Valor == request.Valor &&
+            t.Data == request.Data.ToUniversalTime() &&
+            t.CategoriaId == request.CategoriaId &&
+            t.Observacoes == request.Observacoes
+        )), Times.Once());
+
         _transacaoRepositoryMock.Verify(r => r.GetTransacaoByIdAsync(1), Times.Once());
-        _categoriaRepositoryMock.Verify(r => r.GetAllCategorias(null), Times.Once());
+        _categoriaRepositoryMock.Verify(r => r.GetCategoriaByIdAsync(1), Times.Once());
         _updateValidatorMock.Verify(v => v.ValidateAsync(request, default), Times.Once());
     }
-    
+
     [Theory]
     [InlineData(0, "Transação", 100.50, "2025-08-01", 1, "O ID da transação é obrigatório.")]
     [InlineData(1, "", 100.50, "2025-08-01", 1, "A descrição da transação é obrigatória.")]
@@ -335,11 +363,11 @@ public class TransacaoServiceTests
         result.IsSuccess.ShouldBeFalse();
         result.Error.ShouldContain(expectedError);
         _transacaoRepositoryMock.Verify(r => r.GetTransacaoByIdAsync(It.IsAny<int>()), Times.Never());
-        _categoriaRepositoryMock.Verify(r => r.GetAllCategorias(null), Times.Never());
+        _categoriaRepositoryMock.Verify(r => r.GetCategoriaByIdAsync(categoriaId), Times.Never());
         _transacaoRepositoryMock.Verify(r => r.UpdateTransacaoAsync(It.IsAny<Transacao>()), Times.Never());
         _updateValidatorMock.Verify(v => v.ValidateAsync(request, default), Times.Once());
     }
-    
+
     [Fact]
     public async Task UpdateTransacaoAsync_NonExistentTransacao_ReturnsFailure()
     {
@@ -362,11 +390,11 @@ public class TransacaoServiceTests
         result.IsSuccess.ShouldBeFalse();
         result.Error.ShouldBe("Transação não encontrada.");
         _transacaoRepositoryMock.Verify(r => r.GetTransacaoByIdAsync(999), Times.Once());
-        _categoriaRepositoryMock.Verify(r => r.GetAllCategorias(null), Times.Never());
+        _categoriaRepositoryMock.Verify(r => r.GetCategoriaByIdAsync(1), Times.Never());
         _transacaoRepositoryMock.Verify(r => r.UpdateTransacaoAsync(It.IsAny<Transacao>()), Times.Never());
         _updateValidatorMock.Verify(v => v.ValidateAsync(request, default), Times.Once());
     }
-    
+
     [Fact]
     public async Task UpdateTransacaoAsync_NonExistentOrInactiveCategoria_ReturnsFailure()
     {
@@ -393,20 +421,20 @@ public class TransacaoServiceTests
             .ReturnsAsync(new FluentValidation.Results.ValidationResult());
         _transacaoRepositoryMock.Setup(r => r.GetTransacaoByIdAsync(1))
             .ReturnsAsync(existingTransacao);
-        _categoriaRepositoryMock.Setup(r => r.GetAllCategorias(null))
-            .ReturnsAsync(new List<Categoria>());
+        _categoriaRepositoryMock.Setup(r => r.GetCategoriaByIdAsync(999))
+            .ReturnsAsync((Categoria?)null);
 
         var result = await _transacaoService.UpdateTransacaoAsync(request);
 
         result.IsSuccess.ShouldBeFalse();
         result.Error.ShouldBe("A categoria especificada não existe ou não está ativa.");
         _transacaoRepositoryMock.Verify(r => r.GetTransacaoByIdAsync(1), Times.Once());
-        _categoriaRepositoryMock.Verify(r => r.GetAllCategorias(null), Times.Once());
+        _categoriaRepositoryMock.Verify(r => r.GetCategoriaByIdAsync(999), Times.Once());
         _transacaoRepositoryMock.Verify(r => r.UpdateTransacaoAsync(It.IsAny<Transacao>()), Times.Never());
         _updateValidatorMock.Verify(v => v.ValidateAsync(request, default), Times.Once());
     }
-    
-    
+
+
     [Fact]
     public async Task DeleteTransacaoAsync_ExistingId_DeletesTransacao()
     {
@@ -418,6 +446,7 @@ public class TransacaoServiceTests
         result.IsSuccess.ShouldBeTrue();
         _transacaoRepositoryMock.Verify(r => r.DeleteTransacaoAsync(1), Times.Once());
     }
+
     [Fact]
     public async Task DeleteTransacaoAsync_NonExistentId_ReturnsFailure()
     {
