@@ -54,17 +54,17 @@ public class TransacaoRepository : ITransacaoRepository
             .FirstOrDefaultAsync(t => t.Id == id);
     }
 
-    public async Task<Result> CreateTransacaoAsync(Transacao transacao)
+    public async Task<Result<Transacao>> CreateTransacaoAsync(Transacao transacao)
     {
         try
         {
             _context.Transacoes.Add(transacao);
             await _context.SaveChangesAsync();
-            return Result.Success();
+            return Result<Transacao>.Success(transacao);
         }
         catch (Exception ex)
         {
-            return Result.Failure($"Erro ao criar transação: {ex.Message}");
+            return Result<Transacao>.Failure($"Erro ao criar transação: {ex.Message}");
         }
     }
 

@@ -87,7 +87,7 @@ public class TransacoesController : ControllerBase
         Summary = "Criar transação",
         Description = "Cria uma nova transação com descrição, valor, data, categoria e observações opcionais."
     )]
-    [ProducesResponseType(typeof(CreateTransacaoRequest), StatusCodes.Status201Created)]
+    [ProducesResponseType(typeof(TransacaoResponseDto), StatusCodes.Status201Created)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> Create(
         [FromBody, SwaggerParameter("Dados da transação a ser criada.", Required = true)]
@@ -99,7 +99,7 @@ public class TransacoesController : ControllerBase
             return BadRequest(result.Error);
         }
 
-        return CreatedAtAction(nameof(GetById), new { id = request.CategoriaId }, request);
+        return CreatedAtAction(nameof(GetById), new { id = result.Value!.Id }, result.Value);
     }
 
     /// <summary>
