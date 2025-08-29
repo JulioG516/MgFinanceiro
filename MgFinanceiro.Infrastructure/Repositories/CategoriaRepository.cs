@@ -29,6 +29,11 @@ public class CategoriaRepository : ICategoriaRepository
         return await query.ToListAsync();
     }
 
+    public async Task<Categoria?> GetCategoriaByIdAsync(int id)
+    {
+        return await _context.Categorias.FindAsync(id);
+    }
+
     public async Task<Result> CreateCategoria(Categoria categoria)
     {
         try
