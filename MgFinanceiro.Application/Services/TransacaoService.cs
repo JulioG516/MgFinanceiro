@@ -38,26 +38,36 @@ public class TransacaoService : ITransacaoService
         return transacao != null ? TransacaoMapper.MapTransacaoToResponse(transacao) : null;
     }
 
-    public async Task<Result> CreateTransacaoAsync(CreateTransacaoRequest request)
+    public async Task<Result<TransacaoResponseDto>> CreateTransacaoAsync(CreateTransacaoRequest request)
     {
         var validationResult = await _createValidator.ValidateAsync(request);
         if (!validationResult.IsValid)
         {
             var errors = string.Join("; ", validationResult.Errors.Select(e => e.ErrorMessage));
-            return Result.Failure(errors);
+            return Result<TransacaoResponseDto>.Failure(errors);
         }
 
-        var categoriaExists = await _categoriaRepository.GetAllCategorias()
-            .ContinueWith(t => t.Result.Any(c => c.Id == request.CategoriaId && c.Ativo));
-        if (!categoriaExists)
+        var categoria = await _categoriaRepository.GetCategoriaByIdAsync(request.CategoriaId);
+        if (categoria == null || !categoria.Ativo)
         {
-            return Result.Failure("A categoria especificada não existe ou não está ativa.");
+            return Result<TransacaoResponseDto>.Failure("A categoria especificada não existe ou não está ativa.");
         }
 
         var transacao = TransacaoMapper.CreateTransacaoRequestToTransacao(request);
+        transacao.Data = request.Data.ToUniversalTime();
         transacao.DataCriacao = DateTime.UtcNow;
 
-        return await _transacaoRepository.CreateTransacaoAsync(transacao);
+        var createdResult = await _transacaoRepository.CreateTransacaoAsync(transacao);
+        if (!createdResult.IsSuccess)
+        {
+            return Result<TransacaoResponseDto>.Failure(createdResult.Error);
+        }
+
+        // Para aparecer corretamente a categoria
+        createdResult.Value!.Categoria = categoria;
+        var dto = TransacaoMapper.MapTransacaoToResponse(createdResult.Value!);
+        
+        return Result<TransacaoResponseDto>.Success(dto);
     }
 
     public async Task<Result> UpdateTransacaoAsync(UpdateTransacaoRequest request)
@@ -83,7 +93,8 @@ public class TransacaoService : ITransacaoService
         }
 
         var transacao = TransacaoMapper.UpdateTransacaoRequestToTransacao(request);
-        transacao.DataCriacao = transacaoExistente.DataCriacao;
+        transacao.Data = request.Data.ToUniversalTime(); // Debug
+        transacao.DataCriacao = transacaoExistente.DataCriacao.ToUniversalTime();
 
         return await _transacaoRepository.UpdateTransacaoAsync(transacao);
     }
