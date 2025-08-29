@@ -9,11 +9,11 @@ namespace MgFinanceiro.Controllers;
 [Route("api/[controller]")]
 [ApiController]
 [Produces("application/json")]
-public class CategoriaController : ControllerBase
+public class CategoriasController : ControllerBase
 {
     private readonly ICategoriaService _categoriaService;
 
-    public CategoriaController(ICategoriaService categoriaService)
+    public CategoriasController(ICategoriaService categoriaService)
     {
         _categoriaService = categoriaService;
     }
