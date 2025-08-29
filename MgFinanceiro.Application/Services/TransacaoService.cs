@@ -85,9 +85,8 @@ public class TransacaoService : ITransacaoService
             return Result.Failure("Transação não encontrada.");
         }
 
-        var categoriaExists = await _categoriaRepository.GetAllCategorias()
-            .ContinueWith(t => t.Result.Any(c => c.Id == request.CategoriaId && c.Ativo));
-        if (!categoriaExists)
+        var categoria = await _categoriaRepository.GetCategoriaByIdAsync(request.CategoriaId);
+        if (categoria == null || !categoria.Ativo)
         {
             return Result.Failure("A categoria especificada não existe ou não está ativa.");
         }
