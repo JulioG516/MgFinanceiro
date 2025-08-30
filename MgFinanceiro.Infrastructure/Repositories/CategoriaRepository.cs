@@ -15,15 +15,20 @@ public class CategoriaRepository : ICategoriaRepository
         _context = context;
     }
 
-    public async Task<IEnumerable<Categoria>> GetAllCategorias(TipoCategoria? tipoCategoria = null)
+    public async Task<IEnumerable<Categoria>> GetAllCategorias(TipoCategoria? tipoCategoria = null,
+        bool? statusCategoriaAtivo = null)
     {
         var query = _context.Categorias
-            .AsNoTracking()
-            .Where(c => c.Ativo);
+            .AsNoTracking();
 
         if (tipoCategoria.HasValue)
         {
             query = query.Where(c => c.Tipo == tipoCategoria.Value);
+        }
+
+        if (statusCategoriaAtivo.HasValue)
+        {
+            query = query.Where(c => c.Ativo == statusCategoriaAtivo.Value);
         }
 
         return await query.ToListAsync();
@@ -34,17 +39,31 @@ public class CategoriaRepository : ICategoriaRepository
         return await _context.Categorias.FindAsync(id);
     }
 
-    public async Task<Result> CreateCategoria(Categoria categoria)
+    public async Task<Result<Categoria>> CreateCategoria(Categoria categoria)
     {
         try
         {
             _context.Categorias.Add(categoria);
             await _context.SaveChangesAsync();
-            return Result.Success();
+            return Result<Categoria>.Success(categoria);
         }
         catch (Exception ex)
         {
-            return Result.Failure($"Erro ao criar categoria: {ex.Message}");
+            return Result<Categoria>.Failure($"Erro ao criar categoria: {ex.Message}");
+        }
+    }
+
+    public async Task<Result<Categoria>> UpdateCategoria(Categoria categoria)
+    {
+        try
+        {
+            _context.Categorias.Update(categoria);
+            await _context.SaveChangesAsync();
+            return Result<Categoria>.Success(categoria);
+        }
+        catch (Exception ex)
+        {
+            return Result<Categoria>.Failure($"Erro ao atualizar categoria: {ex.Message}");
         }
     }
 }
