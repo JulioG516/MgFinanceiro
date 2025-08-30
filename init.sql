@@ -58,7 +58,7 @@ CREATE TABLE [Transacoes] (
 CREATE TABLE [Usuarios] (
     [Id] int NOT NULL IDENTITY,
     [Nome] nvarchar(100) NOT NULL,
-    [Email] nvarchar(100) NOT NULL,
+    [Email] nvarchar(255) NOT NULL,
     [SenhaHash] nvarchar(max) NOT NULL,
     [DataCriacao] datetime2 NOT NULL,
     [UltimoLogin] datetime2 NULL,
