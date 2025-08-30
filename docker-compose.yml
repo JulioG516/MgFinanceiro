@@ -30,7 +30,8 @@ services:
       - "1433:1433"
     volumes:
       - sqlserver-data:/var/opt/mssql
-      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./init.sql:/db/init.sql
+      - ./entrypoint.sh:/entrypoint.sh
     networks:
       - mgfinanceiro-network
     restart: unless-stopped
@@ -40,7 +41,7 @@ services:
       timeout: 10s
       retries: 10
       start_period: 60s
-
+    entrypoint: [ "/bin/bash", "/entrypoint.sh" ]
   adminer:
     image: adminer:latest
     container_name: adminer
