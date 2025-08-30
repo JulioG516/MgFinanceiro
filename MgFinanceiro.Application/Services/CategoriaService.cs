@@ -21,29 +21,36 @@ public class CategoriaService : ICategoriaService
         _validator = validator;
     }
 
-    public async Task<IEnumerable<CategoriaResponseDto>> GetAllCategoriasAsync(TipoCategoria? tipoCategoria = null)
+    public async Task<CategoriaResponseDto?> GetCategoriaByIdAsync(int id)
     {
-        var categorias = await _categoriaRepository.GetAllCategorias(tipoCategoria);
+        var categoria = await _categoriaRepository.GetCategoriaByIdAsync(id);
+        return categoria != null ? CategoriaMapper.CategoriaToCategoriaResponse(categoria) : null;
+    }
+
+    public async Task<IEnumerable<CategoriaResponseDto>> GetAllCategoriasAsync(TipoCategoria? tipoCategoria = null,
+        bool? statusCategoriaAtivo = null)
+    {
+        var categorias = await _categoriaRepository.GetAllCategorias(tipoCategoria, statusCategoriaAtivo);
         return CategoriaMapper.CategoriasToCategoriaResponses(categorias);
     }
 
-    public async Task<Result> CreateCategoriaAsync(CreateCategoriaRequest request)
+    public async Task<Result<CategoriaResponseDto>> CreateCategoriaAsync(CreateCategoriaRequest request)
     {
         var validationResult = await _validator.ValidateAsync(request);
         if (!validationResult.IsValid)
         {
             var errors = string.Join("; ", validationResult.Errors.Select(e => e.ErrorMessage));
-            return Result.Failure(errors);
+            return Result<CategoriaResponseDto>.Failure(errors);
         }
 
         var categoria = CategoriaMapper.CreateCategoriaRequestToCategoria(request);
 
-        // Verifica se já não existe uma categoria com este nome e status
+        // Verifica se já não existe uma categoria com este nome e status 
         var exists = await _categoriaRepository.GetAllCategorias()
-            .ContinueWith(t => t.Result.Any(c => c.Nome == categoria.Nome && c.Tipo == categoria.Tipo && c.Ativo));
+            .ContinueWith(t => t.Result.Any(c => c.Nome == categoria.Nome && c.Tipo == categoria.Tipo));
         if (exists)
         {
-            return Result.Failure("Já existe uma categoria ativa com este nome e tipo.");
+            return Result<CategoriaResponseDto>.Failure("Já existe uma categoria com este nome e tipo.");
         }
 
         // Definir propriedades padrão
@@ -52,7 +59,30 @@ public class CategoriaService : ICategoriaService
 
         var result = await _categoriaRepository.CreateCategoria(categoria);
         return result.IsSuccess
-            ? Result.Success()
-            : Result.Failure(result.Error);
+            ? Result<CategoriaResponseDto>.Success(CategoriaMapper.CategoriaToCategoriaResponse(result.Value!))
+            : Result<CategoriaResponseDto>.Failure(result.Error);
+    }
+
+    public async Task<Result<CategoriaResponseDto>> UpdateCategoriaStatusAsync(int id,
+        UpdateCategoriaStatusRequest request)
+    {
+        if (id != request.Id)
+        {
+            return Result<CategoriaResponseDto>.Failure(
+                "O identificador fornecido na URL não corresponde ao especificado no corpo da requisição.");
+        }
+
+        var categoria = await _categoriaRepository.GetCategoriaByIdAsync(id);
+        if (categoria == null)
+        {
+            return Result<CategoriaResponseDto>.Failure("Categoria não encontrada.");
+        }
+
+        categoria.Ativo = request.Ativo;
+
+        var result = await _categoriaRepository.UpdateCategoria(categoria);
+        return result.IsSuccess
+            ? Result<CategoriaResponseDto>.Success(CategoriaMapper.CategoriaToCategoriaResponse(result.Value!))
+            : Result<CategoriaResponseDto>.Failure(result.Error);
     }
 }
