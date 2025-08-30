@@ -15,9 +15,9 @@ public class TransacaoValidatorTests
     {
         _createTransacaoRequestValidator = new CreateTransacaoRequestValidator();
         _updateTransacaoRequestValidator = new UpdateTransacaoRequestValidator();
-        _currentDate = new DateTime(2025, 8, 27, 17, 16, 0);
+        _currentDate = DateTime.Now;
     }
-    
+
     #region Create Transacao Request
 
     [Fact]
@@ -31,12 +31,12 @@ public class TransacaoValidatorTests
             CategoriaId = 1,
             Observacoes = null,
         };
-        
+
         var result = _createTransacaoRequestValidator.TestValidate(request);
         result.ShouldHaveValidationErrorFor(t => t.Descricao)
             .WithErrorMessage("A descrição da transação é obrigatória.");
     }
-    
+
     [Fact]
     public void Should_Have_Error_When_Descricao_Is_Null()
     {
@@ -54,7 +54,7 @@ public class TransacaoValidatorTests
         result.ShouldHaveValidationErrorFor(t => t.Descricao)
             .WithErrorMessage("A descrição da transação é obrigatória.");
     }
-    
+
     [Fact]
     public void Should_Have_Error_When_Descricao_Exceeds_200_Characters()
     {
@@ -93,8 +93,8 @@ public class TransacaoValidatorTests
         result.ShouldHaveValidationErrorFor(t => t.Valor)
             .WithErrorMessage("O valor da transação deve ser maior que zero.");
     }
-    
-    
+
+
     [Fact]
     public void Should_Have_Error_When_Data_Is_Empty()
     {
@@ -131,7 +131,7 @@ public class TransacaoValidatorTests
         result.ShouldHaveValidationErrorFor(t => t.Data)
             .WithErrorMessage("A data da transação não pode ser futura.");
     }
-    
+
     [Theory]
     [InlineData(0)]
     [InlineData(-1)]
@@ -145,12 +145,13 @@ public class TransacaoValidatorTests
             CategoriaId = categoriaId,
             Observacoes = null
         };
-        
+
         var result = _createTransacaoRequestValidator.TestValidate(request);
 
         result.ShouldHaveValidationErrorFor(t => t.CategoriaId)
             .WithErrorMessage("O ID da categoria é obrigatório e deve ser válido.");
     }
+
     [Fact]
     public void Should_Have_Error_When_Observacoes_Exceeds_500_Characters()
     {
@@ -169,7 +170,7 @@ public class TransacaoValidatorTests
         result.ShouldHaveValidationErrorFor(t => t.Observacoes)
             .WithErrorMessage("As observações não podem exceder 500 caracteres.");
     }
-    
+
     [Fact]
     public void Should_Not_Have_Error_When_Observacoes_Is_Null()
     {
@@ -186,7 +187,7 @@ public class TransacaoValidatorTests
 
         result.ShouldNotHaveValidationErrorFor(t => t.Observacoes);
     }
-    
+
     [Fact]
     public void Should_Not_Have_Errors_When_Request_Is_Valid()
     {
@@ -198,15 +199,17 @@ public class TransacaoValidatorTests
             CategoriaId = 1,
             Observacoes = "Observação válida"
         };
-        
+
         var result = _createTransacaoRequestValidator.TestValidate(request);
 
         result.IsValid.ShouldBeTrue();
         result.ShouldNotHaveAnyValidationErrors();
     }
+
     #endregion
-    
+
     #region UpdateTransacaoRequestValidator Tests
+
     [Theory]
     [InlineData(0)]
     [InlineData(-1)]
@@ -227,7 +230,7 @@ public class TransacaoValidatorTests
         result.ShouldHaveValidationErrorFor(t => t.Id)
             .WithErrorMessage("O ID da transação é obrigatório.");
     }
-    
+
     [Fact]
     public void Should_Have_Error_When_Update_Descricao_Is_Empty()
     {
@@ -246,7 +249,7 @@ public class TransacaoValidatorTests
         result.ShouldHaveValidationErrorFor(t => t.Descricao)
             .WithErrorMessage("A descrição da transação é obrigatória.");
     }
-    
+
     [Fact]
     public void Should_Have_Error_When_Update_Descricao_Is_Null()
     {
@@ -265,7 +268,7 @@ public class TransacaoValidatorTests
         result.ShouldHaveValidationErrorFor(t => t.Descricao)
             .WithErrorMessage("A descrição da transação é obrigatória.");
     }
-    
+
     [Fact]
     public void Should_Have_Error_When_Update_Descricao_Exceeds_200_Characters()
     {
@@ -285,6 +288,7 @@ public class TransacaoValidatorTests
         result.ShouldHaveValidationErrorFor(t => t.Descricao)
             .WithErrorMessage("A descrição não pode exceder 200 caracteres.");
     }
+
     [Theory]
     [InlineData(0)]
     [InlineData(-1)]
@@ -305,7 +309,7 @@ public class TransacaoValidatorTests
         result.ShouldHaveValidationErrorFor(t => t.Valor)
             .WithErrorMessage("O valor da transação deve ser maior que zero.");
     }
-    
+
     [Fact]
     public void Should_Have_Error_When_Update_Data_Is_Empty()
     {
@@ -324,7 +328,7 @@ public class TransacaoValidatorTests
         result.ShouldHaveValidationErrorFor(t => t.Data)
             .WithErrorMessage("A data da transação é obrigatória.");
     }
-    
+
     [Fact]
     public void Should_Have_Error_When_Update_Data_Is_Future()
     {
@@ -344,7 +348,7 @@ public class TransacaoValidatorTests
         result.ShouldHaveValidationErrorFor(t => t.Data)
             .WithErrorMessage("A data da transação não pode ser futura.");
     }
-    
+
     [Theory]
     [InlineData(0)]
     [InlineData(-1)]
@@ -365,6 +369,7 @@ public class TransacaoValidatorTests
         result.ShouldHaveValidationErrorFor(t => t.CategoriaId)
             .WithErrorMessage("O ID da categoria é obrigatório e deve ser válido.");
     }
+
     [Fact]
     public void Should_Have_Error_When_Update_Observacoes_Exceeds_500_Characters()
     {
@@ -384,6 +389,7 @@ public class TransacaoValidatorTests
         result.ShouldHaveValidationErrorFor(t => t.Observacoes)
             .WithErrorMessage("As observações não podem exceder 500 caracteres.");
     }
+
     [Fact]
     public void Should_Not_Have_Error_When_Update_Observacoes_Is_Null()
     {
@@ -401,7 +407,7 @@ public class TransacaoValidatorTests
 
         result.ShouldNotHaveValidationErrorFor(t => t.Observacoes);
     }
-    
+
     [Fact]
     public void Should_Not_Have_Errors_When_Update_Request_Is_Valid()
     {
@@ -420,5 +426,6 @@ public class TransacaoValidatorTests
         result.IsValid.ShouldBeTrue();
         result.ShouldNotHaveAnyValidationErrors();
     }
+
     #endregion
 }
