@@ -12,14 +12,14 @@ namespace MgFinanceiro.Tests.CategoriaTests;
 public class CategoriaServiceTests
 {
     private readonly Mock<ICategoriaRepository> _categoriaRepositoryMock;
-    private readonly Mock<IValidator<CreateCategoriaRequest>> _validatorMock;
+    private readonly Mock<IValidator<CreateCategoriaRequest>> _createValidatorMock;
     private readonly CategoriaService _categoriaService;
 
     public CategoriaServiceTests()
     {
         _categoriaRepositoryMock = new Mock<ICategoriaRepository>();
-        _validatorMock = new Mock<IValidator<CreateCategoriaRequest>>();
-        _categoriaService = new CategoriaService(_categoriaRepositoryMock.Object, _validatorMock.Object);
+        _createValidatorMock = new Mock<IValidator<CreateCategoriaRequest>>();
+        _categoriaService = new CategoriaService(_categoriaRepositoryMock.Object, _createValidatorMock.Object);
     }
 
     [Fact]
@@ -91,13 +91,16 @@ public class CategoriaServiceTests
     public async Task CreateCategoriaAsync_ValidRequest_CreatesCategoria()
     {
         var request = new CreateCategoriaRequest { Nome = "Nova Categoria", Tipo = "Receita" };
-        _validatorMock.Setup(v => v.ValidateAsync(request, default))
+        _createValidatorMock.Setup(v => v.ValidateAsync(request, default))
             .ReturnsAsync(new FluentValidation.Results.ValidationResult());
         _categoriaRepositoryMock.Setup(r => r.GetAllCategorias(null, null))
             .ReturnsAsync(new List<Categoria>());
         _categoriaRepositoryMock.Setup(r => r.CreateCategoria(It.IsAny<Categoria>()))
             .ReturnsAsync(Result<Categoria>.Success(new Categoria
-                { Id = 1, Nome = "Nova Categoria", Tipo = TipoCategoria.Receita, Ativo = true, DataCriacao = DateTime.UtcNow }));
+            {
+                Id = 1, Nome = "Nova Categoria", Tipo = TipoCategoria.Receita, Ativo = true,
+                DataCriacao = DateTime.UtcNow
+            }));
 
         var result = await _categoriaService.CreateCategoriaAsync(request);
 
@@ -109,7 +112,7 @@ public class CategoriaServiceTests
             c.DataCriacao != default &&
             c.Transacoes.Count == 0)), Times.Once());
         _categoriaRepositoryMock.Verify(r => r.GetAllCategorias(null, null), Times.Once());
-        _validatorMock.Verify(v => v.ValidateAsync(request, default), Times.Once());
+        _createValidatorMock.Verify(v => v.ValidateAsync(request, default), Times.Once());
     }
 
     [Fact]
@@ -120,7 +123,7 @@ public class CategoriaServiceTests
         {
             new FluentValidation.Results.ValidationFailure("Nome", "Nome não pode ser vazio.")
         });
-        _validatorMock.Setup(v => v.ValidateAsync(request, default))
+        _createValidatorMock.Setup(v => v.ValidateAsync(request, default))
             .ReturnsAsync(validationResult);
 
         var result = await _categoriaService.CreateCategoriaAsync(request);
@@ -129,14 +132,14 @@ public class CategoriaServiceTests
         result.Error.ShouldBe("Nome não pode ser vazio.");
         _categoriaRepositoryMock.Verify(r => r.GetAllCategorias(null, null), Times.Never());
         _categoriaRepositoryMock.Verify(r => r.CreateCategoria(It.IsAny<Categoria>()), Times.Never());
-        _validatorMock.Verify(v => v.ValidateAsync(request, default), Times.Once());
+        _createValidatorMock.Verify(v => v.ValidateAsync(request, default), Times.Once());
     }
 
     [Fact]
     public async Task CreateCategoriaAsync_DuplicateCategoria_ReturnsFailure()
     {
         var request = new CreateCategoriaRequest { Nome = "Vendas", Tipo = "Receita" };
-        _validatorMock.Setup(v => v.ValidateAsync(request, default))
+        _createValidatorMock.Setup(v => v.ValidateAsync(request, default))
             .ReturnsAsync(new FluentValidation.Results.ValidationResult());
         _categoriaRepositoryMock.Setup(r => r.GetAllCategorias(null, null))
             .ReturnsAsync(new List<Categoria>
@@ -154,14 +157,14 @@ public class CategoriaServiceTests
         result.Error.ShouldBe("Já existe uma categoria com este nome e tipo.");
         _categoriaRepositoryMock.Verify(r => r.GetAllCategorias(null, null), Times.Once());
         _categoriaRepositoryMock.Verify(r => r.CreateCategoria(It.IsAny<Categoria>()), Times.Never());
-        _validatorMock.Verify(v => v.ValidateAsync(request, default), Times.Once());
+        _createValidatorMock.Verify(v => v.ValidateAsync(request, default), Times.Once());
     }
 
     [Fact]
     public async Task CreateCategoriaAsync_RepositoryFailure_ReturnsFailure()
     {
         var request = new CreateCategoriaRequest { Nome = "Nova Categoria", Tipo = "Receita" };
-        _validatorMock.Setup(v => v.ValidateAsync(request, default))
+        _createValidatorMock.Setup(v => v.ValidateAsync(request, default))
             .ReturnsAsync(new FluentValidation.Results.ValidationResult());
         _categoriaRepositoryMock.Setup(r => r.GetAllCategorias(null, null))
             .ReturnsAsync(new List<Categoria>());
@@ -174,7 +177,7 @@ public class CategoriaServiceTests
         result.Error.ShouldBe("Erro no banco de dados.");
         _categoriaRepositoryMock.Verify(r => r.GetAllCategorias(null, null), Times.Once());
         _categoriaRepositoryMock.Verify(r => r.CreateCategoria(It.IsAny<Categoria>()), Times.Once());
-        _validatorMock.Verify(v => v.ValidateAsync(request, default), Times.Once());
+        _createValidatorMock.Verify(v => v.ValidateAsync(request, default), Times.Once());
     }
 
     [Fact]
@@ -183,7 +186,11 @@ public class CategoriaServiceTests
         var request = new UpdateCategoriaStatusRequest { Id = 1, Ativo = false };
         var existingCategoria = new Categoria
         {
-            Id = 1, Nome = "Vendas", Tipo = TipoCategoria.Receita, Ativo = true, DataCriacao = DateTime.UtcNow,
+            Id = 1,
+            Nome = "Vendas",
+            Tipo = TipoCategoria.Receita,
+            Ativo = true,
+            DataCriacao = DateTime.UtcNow,
             Transacoes = new List<Transacao>()
         };
         _categoriaRepositoryMock.Setup(r => r.GetCategoriaByIdAsync(1))
@@ -195,12 +202,17 @@ public class CategoriaServiceTests
 
         result.IsSuccess.ShouldBeTrue();
         result.Value.ShouldNotBeNull();
-        result.Value.Ativo.ShouldBeFalse();
+        result.Value.Id.ShouldBe(1);
         result.Value.Nome.ShouldBe("Vendas");
         result.Value.Tipo.ShouldBe("Receita");
+        result.Value.Ativo.ShouldBeFalse();
         _categoriaRepositoryMock.Verify(r => r.GetCategoriaByIdAsync(1), Times.Once());
         _categoriaRepositoryMock.Verify(r => r.UpdateCategoria(It.Is<Categoria>(c =>
-            c.Id == 1 && c.Ativo == false && c.Nome == "Vendas" && c.Tipo == TipoCategoria.Receita)), Times.Once());
+            c.Id == 1 &&
+            c.Ativo == false &&
+            c.Nome == "Vendas" &&
+            c.Tipo == TipoCategoria.Receita &&
+            c.DataCriacao != default)), Times.Once());
     }
 
     [Fact]
@@ -211,7 +223,8 @@ public class CategoriaServiceTests
         var result = await _categoriaService.UpdateCategoriaStatusAsync(1, request);
 
         result.IsSuccess.ShouldBeFalse();
-        result.Error.ShouldBe("O identificador fornecido na URL não corresponde ao especificado no corpo da requisição.");
+        result.Error.ShouldBe(
+            "O identificador fornecido na URL não corresponde ao especificado no corpo da requisição.");
         _categoriaRepositoryMock.Verify(r => r.GetCategoriaByIdAsync(It.IsAny<int>()), Times.Never());
         _categoriaRepositoryMock.Verify(r => r.UpdateCategoria(It.IsAny<Categoria>()), Times.Never());
     }
@@ -237,7 +250,11 @@ public class CategoriaServiceTests
         var request = new UpdateCategoriaStatusRequest { Id = 1, Ativo = false };
         var existingCategoria = new Categoria
         {
-            Id = 1, Nome = "Vendas", Tipo = TipoCategoria.Receita, Ativo = true, DataCriacao = DateTime.UtcNow,
+            Id = 1,
+            Nome = "Vendas",
+            Tipo = TipoCategoria.Receita,
+            Ativo = true,
+            DataCriacao = DateTime.UtcNow,
             Transacoes = new List<Transacao>()
         };
         _categoriaRepositoryMock.Setup(r => r.GetCategoriaByIdAsync(1))
