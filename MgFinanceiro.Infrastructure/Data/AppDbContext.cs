@@ -44,7 +44,7 @@ public class AppDbContext : DbContext
         modelBuilder.Entity<Usuario>()
             .Property(c => c.Email)
             .IsRequired()
-            .HasMaxLength(100);
+            .HasMaxLength(255);
         
         modelBuilder.Entity<Usuario>()
             .Property(c => c.Nome)
