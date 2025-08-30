@@ -125,6 +125,7 @@ builder.Services.AddScoped<IValidator<UpdateTransacaoRequest>, UpdateTransacaoRe
 builder.Services.AddScoped<IValidator<RelatorioQueryDto>, RelatorioQueryValidator>();
 builder.Services.AddScoped<IValidator<LoginRequest>, LoginRequestValidator>();
 builder.Services.AddScoped<IValidator<UsuarioRegisterRequest>, UsuarioRegisterRequestValidator>();
+builder.Services.AddScoped<IValidator<UpdateCategoriaStatusRequest>, UpdateCategoriaRequestValidator>();
 
 // Db
 builder.Services.AddDbContext<AppDbContext>(options =>
