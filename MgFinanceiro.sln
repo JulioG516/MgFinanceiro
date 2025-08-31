@@ -1,6 +1,6 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MgFinanceiro", "MgFinanceiro\MgFinanceiro.csproj", "{76456F53-7C7A-4624-817D-ECCE196323B4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MgFinanceiro.API", "MgFinanceiro.API\MgFinanceiro.API.csproj", "{76456F53-7C7A-4624-817D-ECCE196323B4}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MgFinanceiro.Tests", "MgFinanceiro.Tests\MgFinanceiro.Tests.csproj", "{B33A7F08-F34E-462B-B647-F13B6760B896}"
 EndProject
