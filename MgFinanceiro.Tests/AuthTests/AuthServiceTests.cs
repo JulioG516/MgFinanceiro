@@ -5,7 +5,9 @@ using MgFinanceiro.Application.Services;
 using MgFinanceiro.Domain.Common;
 using MgFinanceiro.Domain.Entities;
 using MgFinanceiro.Domain.Interfaces;
+using MgFinanceiro.Tests.Extensions;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Moq;
 using Shouldly;
 
@@ -17,6 +19,7 @@ public class AuthServiceTests
     private readonly Mock<IConfiguration> _configurationMock;
     private readonly Mock<IValidator<UsuarioRegisterRequest>> _registerRequestValidatorMock;
     private readonly Mock<IValidator<LoginRequest>> _loginRequestValidatorMock;
+    private readonly Mock<ILogger<AuthService>> _loggerMock;
     private readonly AuthService _authService;
 
     public AuthServiceTests()
@@ -25,6 +28,7 @@ public class AuthServiceTests
         _configurationMock = new Mock<IConfiguration>();
         _registerRequestValidatorMock = new Mock<IValidator<UsuarioRegisterRequest>>();
         _loginRequestValidatorMock = new Mock<IValidator<LoginRequest>>();
+        _loggerMock = new Mock<ILogger<AuthService>>();
 
         var jwtSettingsSection = new Mock<IConfigurationSection>();
         jwtSettingsSection.Setup(s => s["SecretKey"]).Returns("supersecretkey12345678901234567890");
@@ -37,7 +41,8 @@ public class AuthServiceTests
             _usuarioRepositoryMock.Object,
             _configurationMock.Object,
             _registerRequestValidatorMock.Object,
-            _loginRequestValidatorMock.Object);
+            _loginRequestValidatorMock.Object,
+            _loggerMock.Object);
     }
 
     #region LoginAsync
@@ -45,6 +50,7 @@ public class AuthServiceTests
     [Fact]
     public async Task LoginAsync_Should_Return_AuthResponse_When_Credentials_Are_Valid()
     {
+        // Arrange
         var loginRequest = new LoginRequest { Email = "test@example.com", Senha = "password123" };
         var usuario = new Usuario
         {
@@ -61,8 +67,10 @@ public class AuthServiceTests
         _usuarioRepositoryMock.Setup(r => r.UpdateLastLoginAsync(usuario.Id))
             .Returns(Task.CompletedTask);
 
+        // Act
         var result = await _authService.LoginAsync(loginRequest);
 
+        // Assert
         result.ShouldNotBeNull();
         result.IsSuccess.ShouldBeTrue();
         result.Value.ShouldNotBeNull();
@@ -73,11 +81,13 @@ public class AuthServiceTests
         _loginRequestValidatorMock.Verify(v => v.ValidateAsync(loginRequest, default), Times.Once());
         _usuarioRepositoryMock.Verify(r => r.GetByEmailAsync(loginRequest.Email), Times.Once());
         _usuarioRepositoryMock.Verify(r => r.UpdateLastLoginAsync(usuario.Id), Times.Once());
+        _loggerMock.VerifyLog(LogLevel.Information, $"Login realizado com sucesso. Email: {loginRequest.Email}, Nome: {usuario.Nome}, Tempo de execução:", Times.Once());
     }
-    
+
     [Fact]
     public async Task LoginAsync_Should_Return_Failure_When_Validation_Fails()
     {
+        // Arrange
         var loginRequest = new LoginRequest { Email = "", Senha = "" };
         var validationResult = new ValidationResult(new[]
         {
@@ -87,8 +97,10 @@ public class AuthServiceTests
         _loginRequestValidatorMock.Setup(v => v.ValidateAsync(loginRequest, default))
             .ReturnsAsync(validationResult);
 
+        // Act
         var result = await _authService.LoginAsync(loginRequest);
 
+        // Assert
         result.ShouldNotBeNull();
         result.IsSuccess.ShouldBeFalse();
         result.Error.ShouldContain("Email é obrigatório");
@@ -96,30 +108,36 @@ public class AuthServiceTests
         _loginRequestValidatorMock.Verify(v => v.ValidateAsync(loginRequest, default), Times.Once());
         _usuarioRepositoryMock.Verify(r => r.GetByEmailAsync(It.IsAny<string>()), Times.Never());
         _usuarioRepositoryMock.Verify(r => r.UpdateLastLoginAsync(It.IsAny<int>()), Times.Never());
+        _loggerMock.VerifyLog(LogLevel.Warning, $"Validação de login falhou. Erros: {result.Error}, Email: {loginRequest.Email}", Times.Once());
     }
-    
+
     [Fact]
     public async Task LoginAsync_Should_Return_Failure_When_Email_Not_Found()
     {
+        // Arrange
         var loginRequest = new LoginRequest { Email = "test@example.com", Senha = "password123" };
         _loginRequestValidatorMock.Setup(v => v.ValidateAsync(loginRequest, default))
             .ReturnsAsync(new ValidationResult());
         _usuarioRepositoryMock.Setup(r => r.GetByEmailAsync(loginRequest.Email))
-            .ReturnsAsync((Usuario)null);
+            .ReturnsAsync((Usuario?)null);
 
+        // Act
         var result = await _authService.LoginAsync(loginRequest);
 
+        // Assert
         result.ShouldNotBeNull();
         result.IsSuccess.ShouldBeFalse();
         result.Error.ShouldBe("Email não cadastrado.");
         _loginRequestValidatorMock.Verify(v => v.ValidateAsync(loginRequest, default), Times.Once());
         _usuarioRepositoryMock.Verify(r => r.GetByEmailAsync(loginRequest.Email), Times.Once());
         _usuarioRepositoryMock.Verify(r => r.UpdateLastLoginAsync(It.IsAny<int>()), Times.Never());
+        _loggerMock.VerifyLog(LogLevel.Warning, $"Usuário não encontrado para o email: {loginRequest.Email}", Times.Once());
     }
-    
+
     [Fact]
     public async Task LoginAsync_Should_Return_Failure_When_Password_Is_Incorrect()
     {
+        // Arrange
         var loginRequest = new LoginRequest { Email = "test@example.com", Senha = "wrongpassword" };
         var usuario = new Usuario
         {
@@ -134,21 +152,27 @@ public class AuthServiceTests
         _usuarioRepositoryMock.Setup(r => r.GetByEmailAsync(loginRequest.Email))
             .ReturnsAsync(usuario);
 
+        // Act
         var result = await _authService.LoginAsync(loginRequest);
 
+        // Assert
         result.ShouldNotBeNull();
         result.IsSuccess.ShouldBeFalse();
         result.Error.ShouldBe("Senha incorreta.");
         _loginRequestValidatorMock.Verify(v => v.ValidateAsync(loginRequest, default), Times.Once());
         _usuarioRepositoryMock.Verify(r => r.GetByEmailAsync(loginRequest.Email), Times.Once());
         _usuarioRepositoryMock.Verify(r => r.UpdateLastLoginAsync(It.IsAny<int>()), Times.Never());
+        _loggerMock.VerifyLog(LogLevel.Warning, $"Falha na verificação de senha para o email: {loginRequest.Email}", Times.Once());
     }
 
     #endregion
+
     #region RegisterAsync
+
     [Fact]
     public async Task RegisterAsync_Should_Return_UsuarioDto_When_Request_Is_Valid()
     {
+        // Arrange
         var registerRequest = new UsuarioRegisterRequest
         {
             Nome = "Test User",
@@ -170,8 +194,10 @@ public class AuthServiceTests
         _usuarioRepositoryMock.Setup(r => r.CreateAsync(It.IsAny<Usuario>()))
             .ReturnsAsync(Result<Usuario>.Success(usuario));
 
+        // Act
         var result = await _authService.RegisterAsync(registerRequest);
 
+        // Assert
         result.ShouldNotBeNull();
         result.IsSuccess.ShouldBeTrue();
         result.Value.ShouldNotBeNull();
@@ -181,11 +207,13 @@ public class AuthServiceTests
         _registerRequestValidatorMock.Verify(v => v.ValidateAsync(registerRequest, default), Times.Once());
         _usuarioRepositoryMock.Verify(r => r.EmailExistsAsync(registerRequest.Email), Times.Once());
         _usuarioRepositoryMock.Verify(r => r.CreateAsync(It.Is<Usuario>(u => u.Email == "test@example.com" && u.Nome == "Test User")), Times.Once());
+        _loggerMock.VerifyLog(LogLevel.Information, $"Usuário registrado com sucesso. ID: {usuario.Id}, Email: {usuario.Email}, Nome: {usuario.Nome}, Tempo de execução:", Times.Once());
     }
-    
-      [Fact]
+
+    [Fact]
     public async Task RegisterAsync_Should_Return_Failure_When_Validation_Fails()
     {
+        // Arrange
         var registerRequest = new UsuarioRegisterRequest { Nome = "", Email = "", Senha = "" };
         var validationResult = new ValidationResult(new[]
         {
@@ -196,8 +224,10 @@ public class AuthServiceTests
         _registerRequestValidatorMock.Setup(v => v.ValidateAsync(registerRequest, default))
             .ReturnsAsync(validationResult);
 
+        // Act
         var result = await _authService.RegisterAsync(registerRequest);
 
+        // Assert
         result.ShouldNotBeNull();
         result.IsSuccess.ShouldBeFalse();
         result.Error.ShouldContain("Nome é obrigatório");
@@ -206,11 +236,13 @@ public class AuthServiceTests
         _registerRequestValidatorMock.Verify(v => v.ValidateAsync(registerRequest, default), Times.Once());
         _usuarioRepositoryMock.Verify(r => r.EmailExistsAsync(It.IsAny<string>()), Times.Never());
         _usuarioRepositoryMock.Verify(r => r.CreateAsync(It.IsAny<Usuario>()), Times.Never());
+        _loggerMock.VerifyLog(LogLevel.Warning, $"Validação de registro falhou. Erros: {result.Error}, Email: {registerRequest.Email}, Nome: {registerRequest.Nome}", Times.Once());
     }
 
     [Fact]
     public async Task RegisterAsync_Should_Return_Failure_When_Email_Already_Exists()
     {
+        // Arrange
         var registerRequest = new UsuarioRegisterRequest
         {
             Nome = "Test User",
@@ -222,19 +254,23 @@ public class AuthServiceTests
         _usuarioRepositoryMock.Setup(r => r.EmailExistsAsync(registerRequest.Email))
             .ReturnsAsync(true);
 
+        // Act
         var result = await _authService.RegisterAsync(registerRequest);
 
+        // Assert
         result.ShouldNotBeNull();
         result.IsSuccess.ShouldBeFalse();
-        result.Error.ShouldBe("Este email já esta em uso");
+        result.Error.ShouldBe("Este email já está em uso.");
         _registerRequestValidatorMock.Verify(v => v.ValidateAsync(registerRequest, default), Times.Once());
         _usuarioRepositoryMock.Verify(r => r.EmailExistsAsync(registerRequest.Email), Times.Once());
         _usuarioRepositoryMock.Verify(r => r.CreateAsync(It.IsAny<Usuario>()), Times.Never());
+        _loggerMock.VerifyLog(LogLevel.Warning, $"Tentativa de registro com email já existente: {registerRequest.Email}", Times.Once());
     }
 
     [Fact]
     public async Task RegisterAsync_Should_Return_Failure_When_Create_Fails()
     {
+        // Arrange
         var registerRequest = new UsuarioRegisterRequest
         {
             Nome = "Test User",
@@ -248,14 +284,17 @@ public class AuthServiceTests
         _usuarioRepositoryMock.Setup(r => r.CreateAsync(It.IsAny<Usuario>()))
             .ReturnsAsync(Result<Usuario>.Failure("Falha ao criar usuario."));
 
+        // Act
         var result = await _authService.RegisterAsync(registerRequest);
 
+        // Assert
         result.ShouldNotBeNull();
         result.IsSuccess.ShouldBeFalse();
         result.Error.ShouldBe("Falha ao criar usuario.");
         _registerRequestValidatorMock.Verify(v => v.ValidateAsync(registerRequest, default), Times.Once());
         _usuarioRepositoryMock.Verify(r => r.EmailExistsAsync(registerRequest.Email), Times.Once());
         _usuarioRepositoryMock.Verify(r => r.CreateAsync(It.IsAny<Usuario>()), Times.Once());
+        _loggerMock.VerifyLog(LogLevel.Error, $"Falha ao criar usuário no repositório. Erro: {result.Error}, Email: {registerRequest.Email}, Nome: {registerRequest.Nome}", Times.Once());
     }
 
     #endregion

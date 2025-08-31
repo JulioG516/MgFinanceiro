@@ -3,6 +3,8 @@ using MgFinanceiro.Application.DTOs.Relatorio;
 using MgFinanceiro.Application.Services;
 using MgFinanceiro.Domain.Entities;
 using MgFinanceiro.Domain.Interfaces;
+using MgFinanceiro.Tests.Extensions;
+using Microsoft.Extensions.Logging;
 using Moq;
 using Shouldly;
 
@@ -12,13 +14,15 @@ public class RelatorioServiceTests
 {
     private readonly Mock<IRelatorioRepository> _relatorioRepositoryMock;
     private readonly Mock<IValidator<RelatorioQueryDto>> _queryValidatorMock;
+    private readonly Mock<ILogger<RelatorioService>> _loggerMock;
     private readonly RelatorioService _relatorioService;
 
     public RelatorioServiceTests()
     {
         _relatorioRepositoryMock = new Mock<IRelatorioRepository>();
         _queryValidatorMock = new Mock<IValidator<RelatorioQueryDto>>();
-        _relatorioService = new RelatorioService(_relatorioRepositoryMock.Object, _queryValidatorMock.Object);
+        _loggerMock = new Mock<ILogger<RelatorioService>>();
+        _relatorioService = new RelatorioService(_relatorioRepositoryMock.Object, _queryValidatorMock.Object, _loggerMock.Object);
     }
 
     #region GetRelatorioResumoAsync
@@ -113,15 +117,13 @@ public class RelatorioServiceTests
         _queryValidatorMock.Setup(v => v.ValidateAsync(query, default))
             .ReturnsAsync(validationResult);
 
-
         var result = await _relatorioService.GetRelatorioResumoAsync(query);
 
         result.ShouldNotBeNull();
         result.IsSuccess.ShouldBeFalse();
         result.Error.ShouldContain("O ano deve ser informado quando o mês é especificado.");
-        _relatorioRepositoryMock.Verify(r => r.GetPorCategoriaAnoAtualAsync(), Times.Never());
-        _relatorioRepositoryMock.Verify(r => r.GetPorCategoriaPorPeriodoAsync(It.IsAny<int>(), It.IsAny<int?>()),
-            Times.Never());
+        _relatorioRepositoryMock.Verify(r => r.GetResumoAnoAtualAsync(), Times.Never());
+        _relatorioRepositoryMock.Verify(r => r.GetResumoPorPeriodoAsync(It.IsAny<int>(), It.IsAny<int?>()), Times.Never());
         _queryValidatorMock.Verify(v => v.ValidateAsync(query, default), Times.Once());
     }
     
@@ -136,16 +138,17 @@ public class RelatorioServiceTests
         _queryValidatorMock.Setup(v => v.ValidateAsync(query, default))
             .ReturnsAsync(validationResult);
 
-
-        var result = await _relatorioService.GetRelatorioPorCategoriaAsync(query);
+        var result = await _relatorioService.GetRelatorioResumoAsync(query);
 
         result.ShouldNotBeNull();
         result.IsSuccess.ShouldBeFalse();
         result.Error.ShouldContain("O mês deve estar entre 1 e 12.");
-        _relatorioRepositoryMock.Verify(r => r.GetPorCategoriaAnoAtualAsync(), Times.Never());
-        _relatorioRepositoryMock.Verify(r => r.GetPorCategoriaPorPeriodoAsync(It.IsAny<int>(), It.IsAny<int?>()),
-            Times.Never());
+        _relatorioRepositoryMock.Verify(r => r.GetResumoAnoAtualAsync(), Times.Never());
+        _relatorioRepositoryMock.Verify(r => r.GetResumoPorPeriodoAsync(It.IsAny<int>(), It.IsAny<int?>()), Times.Never());
         _queryValidatorMock.Verify(v => v.ValidateAsync(query, default), Times.Once());
+        
+        _loggerMock.VerifyLog(LogLevel.Information, "Iniciando geração de relatório resumo. Período: 13/2025", Times.Once());
+        _loggerMock.VerifyLog(LogLevel.Warning, "Validação falhou para relatório resumo. Período: 13/2025, Erros: O mês deve estar entre 1 e 12.", Times.Once());
     }
 
     [Fact]
@@ -166,7 +169,7 @@ public class RelatorioServiceTests
         _relatorioRepositoryMock.Verify(r => r.GetResumoPorPeriodoAsync(2025, 8), Times.Once());
         _queryValidatorMock.Verify(v => v.ValidateAsync(query, default), Times.Once());
     }
-
+    
     #endregion
 
     #region GetRelatorioPorCategoriaAsync
@@ -285,8 +288,8 @@ public class RelatorioServiceTests
         _queryValidatorMock.Setup(v => v.ValidateAsync(query, default))
             .ReturnsAsync(validationResult);
 
-
         var result = await _relatorioService.GetRelatorioPorCategoriaAsync(query);
+        
         result.ShouldNotBeNull();
         result.IsSuccess.ShouldBeFalse();
         result.Error.ShouldContain("O ano deve ser informado quando o mês é especificado.");
@@ -306,7 +309,6 @@ public class RelatorioServiceTests
         });
         _queryValidatorMock.Setup(v => v.ValidateAsync(query, default))
             .ReturnsAsync(validationResult);
-
 
         var result = await _relatorioService.GetRelatorioPorCategoriaAsync(query);
 
@@ -337,6 +339,5 @@ public class RelatorioServiceTests
         _relatorioRepositoryMock.Verify(r => r.GetPorCategoriaPorPeriodoAsync(2025, 8), Times.Once());
         _queryValidatorMock.Verify(v => v.ValidateAsync(query, default), Times.Once());
     }
-
     #endregion
 }
