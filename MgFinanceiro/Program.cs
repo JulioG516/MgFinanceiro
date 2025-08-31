@@ -14,12 +14,22 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Serilog;
 using SharpGrip.FluentValidation.AutoValidation.Mvc.Extensions;
 using Swashbuckle.AspNetCore.SwaggerGen;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
+builder.Host.UseSerilog((context, services, configuration) =>
+{
+    configuration
+        .ReadFrom.Configuration(context.Configuration)
+        .ReadFrom.Services(services)
+        .Enrich.FromLogContext()
+        .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {Message:lj}{NewLine}{Exception}")
+        .WriteTo.File(new Serilog.Formatting.Json.JsonFormatter(), "logs/log-.json",
+            rollingInterval: RollingInterval.Day, retainedFileCountLimit: 7);
+});
 
 builder.Services.AddControllers();
 
@@ -150,7 +160,10 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 
 
 var app = builder.Build();
-
+app.UseSerilogRequestLogging(options =>
+{
+    options.MessageTemplate = "Requisição HTTP {RequestMethod} {RequestPath} respondida com status {StatusCode}";
+});
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -158,6 +171,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseCors(x => x.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 
 app.UseHttpsRedirection();
 
