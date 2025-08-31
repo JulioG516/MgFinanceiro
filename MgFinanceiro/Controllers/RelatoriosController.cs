@@ -1,5 +1,6 @@
 ﻿using MgFinanceiro.Application.DTOs.Relatorio;
 using MgFinanceiro.Application.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -8,6 +9,7 @@ namespace MgFinanceiro.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [Produces("application/json")]
+[Authorize]
 public class RelatoriosController : ControllerBase
 {
     private readonly IRelatorioService _relatorioService;

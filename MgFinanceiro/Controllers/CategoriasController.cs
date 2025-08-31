@@ -1,6 +1,7 @@
 ﻿using MgFinanceiro.Application.DTOs.Categoria;
 using MgFinanceiro.Application.Interfaces;
 using MgFinanceiro.Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -9,6 +10,7 @@ namespace MgFinanceiro.Controllers;
 [Route("api/[controller]")]
 [ApiController]
 [Produces("application/json")]
+[Authorize]
 public class CategoriasController : ControllerBase
 {
     private readonly ICategoriaService _categoriaService;

@@ -1,6 +1,7 @@
 ﻿using MgFinanceiro.Application.DTOs.Transacao;
 using MgFinanceiro.Application.Interfaces;
 using MgFinanceiro.Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -9,6 +10,7 @@ namespace MgFinanceiro.Controllers;
 [ApiController]
 [Route("api/[controller]")]
 [Produces("application/json")]
+[Authorize]
 public class TransacoesController : ControllerBase
 {
     private readonly ITransacaoService _transacaoService;
