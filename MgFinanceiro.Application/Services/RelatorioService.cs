@@ -326,7 +326,7 @@ public class RelatorioService : IRelatorioService
             .SetFontSize(16)
             .SetTextAlignment(TextAlignment.CENTER));
 
-        var table = new Table(UnitValue.CreatePercentArray(new float[] { 20, 20, 20, 20, 20 }))
+        var table = new Table(UnitValue.CreatePercentArray(new float[] { 20, 20, 20, 20 }))
             .UseAllAvailableWidth();
         table.AddHeaderCell("Mês/Ano");
         table.AddHeaderCell("Total Receitas");
