@@ -5,7 +5,7 @@
 - **Autenticação**: Login e registro de usuários com tokens JWT.
 - **Gerenciamento de Categorias**: Criação, consulta e atualização de status de categorias (Ativo/Inativo).
 - **Transações**: Criação, exclusão e atualização de transações financeiras.
-- **Relatórios**: Geração de relatórios financeiros com filtros.
+- **Relatórios**: Visualização e exportação de relatórios financeiros com filtros.
 - **Validação**: Validações robustas para entradas de dados.
 - **Log**: Registro estruturado de eventos para monitoramento e depuração.
 - **Testes Unitários**: Cobertura de testes para serviços e regras de negócio, garantindo confiabilidade.
@@ -50,6 +50,22 @@ A documentação inclui:
 - Exemplos de requisições e respostas em JSON.
 - Suporte a autenticação via Bearer Token (JWT).
 
+## NOTA
+
+Para utilizar completamente a API, é necessário estar autenticado. A autenticação é realizada por meio de um **Bearer Token** (JWT) incluído no cabeçalho `Authorization` das requisições. O token pode ser gerado através do endpoint de login, que autentica o usuário e retorna o token JWT. Inclua o token no formato `Bearer <token>` em todas as requisições aos endpoints protegidos.
+
+**Exemplo de uso**:
+
+1. Realize o login via endpoint (ex.: `POST /api/Auth/login`) com credenciais válidas.
+2. Receba o token JWT na resposta.
+3. Adicione o token ao cabeçalho `Authorization` das requisições:
+
+```http
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+```
+
+**Observação**: Certifique-se de que o token não esteja expirado. Caso expire, realize um novo login para obter um token válido.
+
 ## Decisões Técnicas
 
 ### Clean Architecture
@@ -89,6 +105,16 @@ A escolha pela **Clean Architecture** foi feita para garantir:
 - Utilizado para acesso ao banco de dados SQL Server.
 - Configurado com retry em caso de falhas temporárias, aumentando a resiliência.
 
+### iText
+
+- Utilizado para geração de arquivos PDF nos endpoints de exportação de relatórios (`/api/Relatorios/resumo/export` e `/api/Relatorios/por-categoria/export`).
+- Escolhido por sua robustez e flexibilidade na criação de documentos PDF, permitindo formatação personalizada, como tabelas e cabeçalhos, com suporte a layouts complexos.
+
+### ClosedXML
+
+- Utilizado para geração de arquivos Excel (formato `.xlsx`) nos endpoints de exportação de relatórios.
+- Escolhido por sua simplicidade e capacidade de criar planilhas Excel sem dependência de bibliotecas externas ou instalação do Microsoft Excel, garantindo compatibilidade multiplataforma.
+
 ### Testes Unitários (xUnit e Shouldly)
 - Testes unitários implementados para serviços, validadores e regras de negócio.
 - Garante a confiabilidade e integridade do código, cobrindo casos de uso principais e cenários de erro.
@@ -112,6 +138,8 @@ A escolha pela **Clean Architecture** foi feita para garantir:
     - `Serilog.Sinks.File`
     - `Serilog.Formatting.Compact`
     - `Riok.Mapperly`
+    - `Itext`
+    - `ClosedXml`
 
 ### Passos Para Executar com Docker
 1. **Clone o repositório**:
@@ -536,6 +564,27 @@ mês/ano específico.
 
 - **400 Bad Request**: Parâmetros inválidos
 
+
+#### `GET /api/Relatorios/resumo/export`
+
+Exporta um resumo de transações.
+
+**Descrição**: Gera e retorna um arquivo com o resumo de transações no formato PDF ou Excel para o período especificado.
+
+**Query Parameters**:
+
+- `ano` (opcional): Ano para filtro (ex.: 2024). Opcional, padrão é o ano atual
+- `mes` (opcional): Mês para filtro (1 a 12). Opcional, se não fornecido, retorna todos os meses do ano
+- `formato` (obrigatório): Formato do arquivo a ser exportado (`pdf` ou `xlsx`)
+
+**Responses**:
+
+- **200 OK**: Arquivo PDF ou Excel com o resumo das transações
+    - Content-Type: `application/pdf` (para formato=pdf) ou `application/vnd.openxmlformats-officedocument.spreadsheetml.sheet` (para formato=xlsx)
+    - Content-Disposition: `attachment; filename=Relatorio_Resumo_YYYYMMDDHHMMSS.[pdf|xlsx]`
+
+- **400 Bad Request**: Parâmetros inválidos ou formato inválido
+
 #### `GET /api/Relatorios/por-categoria`
 
 Transações por categoria.
@@ -567,19 +616,27 @@ específico.
 
 - **400 Bad Request**: Parâmetros inválidos
 
+#### `GET /api/Relatorios/por-categoria/export`
+
+Exporta transações por categoria.
+
+**Descrição**: Gera e retorna um arquivo com transações agrupadas por categoria no formato PDF ou Excel para o período especificado.
+
+**Query Parameters**:
+
+- `ano` (opcional): Ano para filtro (ex.: 2024). Opcional, padrão é o ano atual
+- `mes` (opcional): Mês para filtro (1 a 12). Opcional, se não fornecido, retorna todos os meses do ano
+- `formato` (obrigatório): Formato do arquivo a ser exportado (`pdf` ou `xlsx`)
+
+**Responses**:
+
+- **200 OK**: Arquivo PDF ou Excel com as transações por categoria
+    - Content-Type: `application/pdf` (para formato=pdf) ou `application/vnd.openxmlformats-officedocument.spreadsheetml.sheet` (para formato=xlsx)
+    - Content-Disposition: `attachment; filename=Relatorio_PorCategoria_YYYYMMDDHHMMSS.[pdf|xlsx]`
+
+- **400 Bad Request**: Parâmetros inválidos ou formato inválido
+
 ---
-
-## Códigos de Status HTTP
-
-- **200 OK**: Requisição bem-sucedida
-- **201 Created**: Recurso criado com sucesso
-- **204 No Content**: Operação bem-sucedida sem conteúdo de retorno
-- **400 Bad Request**: Dados da requisição inválidos
-- **401 Unauthorized**: Não autenticado ou token inválido
-- **404 Not Found**: Recurso não encontrado
-
-
-
 
 ## Contato
 
