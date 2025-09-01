@@ -36,6 +36,8 @@ public class CategoriaServiceTests
     public async Task GetAllCategoriasAsync_WithoutFilter_ReturnsAllActiveCategorias()
     {
         // Arrange
+        var pageNumber = 1;
+        var pageSize = 10;
         var categorias = new List<Categoria>
         {
             new()
@@ -49,26 +51,34 @@ public class CategoriaServiceTests
                 DataCriacao = DateTime.UtcNow, Transacoes = new List<Transacao>()
             }
         };
-        _categoriaRepositoryMock.Setup(r => r.GetAllCategorias(null, null))
-            .ReturnsAsync(categorias);
+        _categoriaRepositoryMock.Setup(r => r.GetAllCategorias(pageNumber, pageSize, null, null))
+            .ReturnsAsync((categorias, categorias.Count));
 
         // Act
-        var result = (await _categoriaService.GetAllCategoriasAsync()).ToList();
+        var result = await _categoriaService.GetAllCategoriasAsync(pageNumber, pageSize);
 
         // Assert
         result.ShouldNotBeNull();
-        result.Count().ShouldBe(2);
-        result.ShouldContain(c => c.Nome == "Vendas" && c.Tipo == "Receita" && c.Ativo);
-        result.ShouldContain(c => c.Nome == "Despesas Operacionais" && c.Tipo == "Despesa" && c.Ativo);
-        _categoriaRepositoryMock.Verify(r => r.GetAllCategorias(null, null), Times.Once());
+        result.Data.ShouldNotBeNull();
+        result.Data.Count().ShouldBe(2);
+        result.PageNumber.ShouldBe(pageNumber);
+        result.PageSize.ShouldBe(pageSize);
+        result.TotalItems.ShouldBe(2);
+        result.TotalPages.ShouldBe(1);
+        result.Data.ShouldContain(c => c.Nome == "Vendas" && c.Tipo == "Receita" && c.Ativo);
+        result.Data.ShouldContain(c => c.Nome == "Despesas Operacionais" && c.Tipo == "Despesa" && c.Ativo);
+        _categoriaRepositoryMock.Verify(r => r.GetAllCategorias(pageNumber, pageSize, null, null), Times.Once());
         _loggerMock.VerifyLog(LogLevel.Information,
-            "Consulta de categorias realizada com sucesso. Total encontrado: 2, Tempo de execução:", Times.Once());
+            $"Consulta de categorias realizada com sucesso. Total encontrado: 2, Total de itens: 2, Página: {pageNumber}, Tamanho da Página: {pageSize}, Tempo de execução:",
+            Times.Once());
     }
 
     [Fact]
     public async Task GetAllCategoriasAsync_WithTipoCategoriaFilter_ReturnsFilteredCategorias()
     {
         // Arrange
+        var pageNumber = 1;
+        var pageSize = 10;
         var categorias = new List<Categoria>
         {
             new()
@@ -77,39 +87,54 @@ public class CategoriaServiceTests
                 Transacoes = new List<Transacao>()
             }
         };
-        _categoriaRepositoryMock.Setup(r => r.GetAllCategorias(TipoCategoria.Receita, null))
-            .ReturnsAsync(categorias);
+        _categoriaRepositoryMock.Setup(r => r.GetAllCategorias(pageNumber, pageSize, TipoCategoria.Receita, null))
+            .ReturnsAsync((categorias, categorias.Count));
 
         // Act
-        var result = (await _categoriaService.GetAllCategoriasAsync(TipoCategoria.Receita)).ToList();
+        var result = await _categoriaService.GetAllCategoriasAsync(pageNumber, pageSize, TipoCategoria.Receita);
 
         // Assert
         result.ShouldNotBeNull();
-        result.Count.ShouldBe(1);
-        result.First().Nome.ShouldBe("Vendas");
-        result.First().Tipo.ShouldBe("Receita");
-        result.First().Ativo.ShouldBeTrue();
-        _categoriaRepositoryMock.Verify(r => r.GetAllCategorias(TipoCategoria.Receita, null), Times.Once());
+        result.Data.ShouldNotBeNull();
+        result.Data.Count().ShouldBe(1);
+        result.PageNumber.ShouldBe(pageNumber);
+        result.PageSize.ShouldBe(pageSize);
+        result.TotalItems.ShouldBe(1);
+        result.TotalPages.ShouldBe(1);
+        result.Data.First().Nome.ShouldBe("Vendas");
+        result.Data.First().Tipo.ShouldBe("Receita");
+        result.Data.First().Ativo.ShouldBeTrue();
+        _categoriaRepositoryMock.Verify(r => r.GetAllCategorias(pageNumber, pageSize, TipoCategoria.Receita, null), Times.Once());
         _loggerMock.VerifyLog(LogLevel.Information,
-            "Consulta de categorias realizada com sucesso. Total encontrado: 1, Tempo de execução:", Times.Once());
+            $"Consulta de categorias realizada com sucesso. Total encontrado: 1, Total de itens: 1, Página: {pageNumber}, Tamanho da Página: {pageSize}, Tempo de execução:",
+            Times.Once());
     }
 
     [Fact]
     public async Task GetAllCategoriasAsync_NoActiveCategorias_ReturnsEmptyList()
     {
         // Arrange
-        _categoriaRepositoryMock.Setup(r => r.GetAllCategorias(null, null))
-            .ReturnsAsync(new List<Categoria>());
+        var pageNumber = 1;
+        var pageSize = 10;
+        var categorias = new List<Categoria>();
+        _categoriaRepositoryMock.Setup(r => r.GetAllCategorias(pageNumber, pageSize, null, null))
+            .ReturnsAsync((categorias, categorias.Count));
 
         // Act
-        var result = (await _categoriaService.GetAllCategoriasAsync()).ToList();
+        var result = await _categoriaService.GetAllCategoriasAsync(pageNumber, pageSize);
 
         // Assert
         result.ShouldNotBeNull();
-        result.ShouldBeEmpty();
-        _categoriaRepositoryMock.Verify(r => r.GetAllCategorias(null, null), Times.Once());
+        result.Data.ShouldNotBeNull();
+        result.Data.ShouldBeEmpty();
+        result.PageNumber.ShouldBe(pageNumber);
+        result.PageSize.ShouldBe(pageSize);
+        result.TotalItems.ShouldBe(0);
+        result.TotalPages.ShouldBe(0);
+        _categoriaRepositoryMock.Verify(r => r.GetAllCategorias(pageNumber, pageSize, null, null), Times.Once());
         _loggerMock.VerifyLog(LogLevel.Information,
-            "Consulta de categorias realizada com sucesso. Total encontrado: 0, Tempo de execução:", Times.Once());
+            $"Consulta de categorias realizada com sucesso. Total encontrado: 0, Total de itens: 0, Página: {pageNumber}, Tamanho da Página: {pageSize}, Tempo de execução:",
+            Times.Once());
     }
 
     #endregion
@@ -123,8 +148,8 @@ public class CategoriaServiceTests
         var request = new CreateCategoriaRequest { Nome = "Nova Categoria", Tipo = "Receita" };
         _createValidatorMock.Setup(v => v.ValidateAsync(request, default))
             .ReturnsAsync(new ValidationResult());
-        _categoriaRepositoryMock.Setup(r => r.GetAllCategorias(null, null))
-            .ReturnsAsync(new List<Categoria>());
+        _categoriaRepositoryMock.Setup(r => r.ExistsCategoriaAsync("Nova Categoria", TipoCategoria.Receita))
+            .ReturnsAsync(false);
         _categoriaRepositoryMock.Setup(r => r.CreateCategoria(It.IsAny<Categoria>()))
             .ReturnsAsync(Result<Categoria>.Success(new Categoria
             {
@@ -142,13 +167,13 @@ public class CategoriaServiceTests
         result.Value.Nome.ShouldBe("Nova Categoria");
         result.Value.Tipo.ShouldBe("Receita");
         result.Value.Ativo.ShouldBeTrue();
+        _categoriaRepositoryMock.Verify(r => r.ExistsCategoriaAsync("Nova Categoria", TipoCategoria.Receita), Times.Once());
         _categoriaRepositoryMock.Verify(r => r.CreateCategoria(It.Is<Categoria>(c =>
             c.Nome == "Nova Categoria" &&
             c.Tipo == TipoCategoria.Receita &&
             c.Ativo == true &&
             c.DataCriacao != default &&
             c.Transacoes.Count == 0)), Times.Once());
-        _categoriaRepositoryMock.Verify(r => r.GetAllCategorias(null, null), Times.Once());
         _createValidatorMock.Verify(v => v.ValidateAsync(request, default), Times.Once());
         _loggerMock.VerifyLog(LogLevel.Information,
             $"Categoria criada com sucesso. ID: 1, Nome: {request.Nome}, Tipo: {request.Tipo}", Times.Once());
@@ -172,7 +197,7 @@ public class CategoriaServiceTests
         // Assert
         result.IsSuccess.ShouldBeFalse();
         result.Error.ShouldBe("Nome não pode ser vazio.");
-        _categoriaRepositoryMock.Verify(r => r.GetAllCategorias(null, null), Times.Never());
+        _categoriaRepositoryMock.Verify(r => r.ExistsCategoriaAsync(It.IsAny<string>(), It.IsAny<TipoCategoria>()), Times.Never());
         _categoriaRepositoryMock.Verify(r => r.CreateCategoria(It.IsAny<Categoria>()), Times.Never());
         _createValidatorMock.Verify(v => v.ValidateAsync(request, default), Times.Once());
         _loggerMock.VerifyLog(LogLevel.Warning,
@@ -186,15 +211,8 @@ public class CategoriaServiceTests
         var request = new CreateCategoriaRequest { Nome = "Vendas", Tipo = "Receita" };
         _createValidatorMock.Setup(v => v.ValidateAsync(request, default))
             .ReturnsAsync(new ValidationResult());
-        _categoriaRepositoryMock.Setup(r => r.GetAllCategorias(null, null))
-            .ReturnsAsync(new List<Categoria>
-            {
-                new()
-                {
-                    Id = 1, Nome = "Vendas", Tipo = TipoCategoria.Receita, Ativo = true, DataCriacao = DateTime.UtcNow,
-                    Transacoes = new List<Transacao>()
-                }
-            });
+        _categoriaRepositoryMock.Setup(r => r.ExistsCategoriaAsync("Vendas", TipoCategoria.Receita))
+            .ReturnsAsync(true);
 
         // Act
         var result = await _categoriaService.CreateCategoriaAsync(request);
@@ -202,7 +220,7 @@ public class CategoriaServiceTests
         // Assert
         result.IsSuccess.ShouldBeFalse();
         result.Error.ShouldBe("Já existe uma categoria com este nome e tipo.");
-        _categoriaRepositoryMock.Verify(r => r.GetAllCategorias(null, null), Times.Once());
+        _categoriaRepositoryMock.Verify(r => r.ExistsCategoriaAsync("Vendas", TipoCategoria.Receita), Times.Once());
         _categoriaRepositoryMock.Verify(r => r.CreateCategoria(It.IsAny<Categoria>()), Times.Never());
         _createValidatorMock.Verify(v => v.ValidateAsync(request, default), Times.Once());
         _loggerMock.VerifyLog(LogLevel.Warning,
@@ -216,8 +234,8 @@ public class CategoriaServiceTests
         var request = new CreateCategoriaRequest { Nome = "Nova Categoria", Tipo = "Receita" };
         _createValidatorMock.Setup(v => v.ValidateAsync(request, default))
             .ReturnsAsync(new ValidationResult());
-        _categoriaRepositoryMock.Setup(r => r.GetAllCategorias(null, null))
-            .ReturnsAsync(new List<Categoria>());
+        _categoriaRepositoryMock.Setup(r => r.ExistsCategoriaAsync("Nova Categoria", TipoCategoria.Receita))
+            .ReturnsAsync(false);
         _categoriaRepositoryMock.Setup(r => r.CreateCategoria(It.IsAny<Categoria>()))
             .ReturnsAsync(Result<Categoria>.Failure("Erro no banco de dados."));
 
@@ -227,7 +245,7 @@ public class CategoriaServiceTests
         // Assert
         result.IsSuccess.ShouldBeFalse();
         result.Error.ShouldBe("Erro no banco de dados.");
-        _categoriaRepositoryMock.Verify(r => r.GetAllCategorias(null, null), Times.Once());
+        _categoriaRepositoryMock.Verify(r => r.ExistsCategoriaAsync("Nova Categoria", TipoCategoria.Receita), Times.Once());
         _categoriaRepositoryMock.Verify(r => r.CreateCategoria(It.IsAny<Categoria>()), Times.Once());
         _createValidatorMock.Verify(v => v.ValidateAsync(request, default), Times.Once());
         _loggerMock.VerifyLog(LogLevel.Error,

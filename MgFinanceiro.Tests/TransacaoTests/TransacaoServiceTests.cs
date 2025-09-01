@@ -36,11 +36,14 @@ public class TransacaoServiceTests
             _loggerMock.Object);
     }
 
+    #region GetAllTransacoesAsync
 
     [Fact]
     public async Task GetAllTransacoesAsync_NoFilters_ReturnsAllTransacoes()
     {
         // Arrange
+        var pageNumber = 1;
+        var pageSize = 10;
         var transacoes = new List<Transacao>
         {
             new()
@@ -66,28 +69,38 @@ public class TransacaoServiceTests
                 Categoria = new Categoria { Id = 2, Nome = "Despesas", Tipo = TipoCategoria.Despesa, Ativo = true }
             }
         };
-        _transacaoRepositoryMock.Setup(r => r.GetAllTransacoesAsync(null, null, null, null))
-            .ReturnsAsync(transacoes);
+        _transacaoRepositoryMock.Setup(r => r.GetAllTransacoesAsync(null, null, null, null, pageNumber, pageSize))
+            .ReturnsAsync((transacoes, transacoes.Count));
 
         // Act
-        var result = (await _transacaoService.GetAllTransacoesAsync(null, null, null, null)).ToList();
+        var result = await _transacaoService.GetAllTransacoesAsync(null, null, null, null, pageNumber, pageSize);
 
         // Assert
         result.ShouldNotBeNull();
-        result.Count.ShouldBe(2);
-        result.ShouldContain(t =>
+        result.Data.ShouldNotBeNull();
+        result.Data.Count().ShouldBe(2);
+        result.PageNumber.ShouldBe(pageNumber);
+        result.PageSize.ShouldBe(pageSize);
+        result.TotalItems.ShouldBe(2);
+        result.TotalPages.ShouldBe(1);
+        result.Data.ShouldContain(t =>
             t.Descricao == "Transação 1" && t.Valor == 100.50m && t.CategoriaNome == "Vendas" &&
             t.CategoriaTipo == "Receita");
-        result.ShouldContain(t =>
+        result.Data.ShouldContain(t =>
             t.Descricao == "Transação 2" && t.Valor == 200.75m && t.CategoriaNome == "Despesas" &&
             t.CategoriaTipo == "Despesa");
-        _transacaoRepositoryMock.Verify(r => r.GetAllTransacoesAsync(null, null, null, null), Times.Once());
+        _transacaoRepositoryMock.Verify(r => r.GetAllTransacoesAsync(null, null, null, null, pageNumber, pageSize), Times.Once());
+        _loggerMock.VerifyLog(LogLevel.Information,
+            $"Consulta de transações realizada com sucesso. Total encontrado: 2, Total de itens: 2, Página: {pageNumber}, Tamanho da Página: {pageSize}, Tempo de execução:",
+            Times.Once());
     }
 
     [Fact]
     public async Task GetAllTransacoesAsync_WithFilters_ReturnsFilteredTransacoes()
     {
         // Arrange
+        var pageNumber = 1;
+        var pageSize = 10;
         var transacoes = new List<Transacao>
         {
             new()
@@ -106,53 +119,83 @@ public class TransacaoServiceTests
         var dataFim = new DateTime(2025, 8, 31);
         var categoriaId = 1;
         var tipoCategoria = TipoCategoria.Receita;
-        _transacaoRepositoryMock.Setup(r => r.GetAllTransacoesAsync(dataInicio, dataFim, categoriaId, tipoCategoria))
-            .ReturnsAsync(transacoes);
+        _transacaoRepositoryMock.Setup(r => r.GetAllTransacoesAsync(dataInicio, dataFim, categoriaId, tipoCategoria, pageNumber, pageSize))
+            .ReturnsAsync((transacoes, transacoes.Count));
 
         // Act
-        var result = (await _transacaoService.GetAllTransacoesAsync(dataInicio, dataFim, categoriaId, tipoCategoria))
-            .ToList();
+        var result = await _transacaoService.GetAllTransacoesAsync(dataInicio, dataFim, categoriaId, tipoCategoria, pageNumber, pageSize);
 
         // Assert
         result.ShouldNotBeNull();
-        result.Count.ShouldBe(1);
-        result.First().Descricao.ShouldBe("Transação 1");
-        result.First().Valor.ShouldBe(100.50m);
-        result.First().CategoriaId.ShouldBe(1);
-        result.First().CategoriaNome.ShouldBe("Vendas");
-        result.First().CategoriaTipo.ShouldBe("Receita");
-        _transacaoRepositoryMock.Verify(r => r.GetAllTransacoesAsync(dataInicio, dataFim, categoriaId, tipoCategoria), Times.Once());
+        result.Data.ShouldNotBeNull();
+        result.Data.Count().ShouldBe(1);
+        result.PageNumber.ShouldBe(pageNumber);
+        result.PageSize.ShouldBe(pageSize);
+        result.TotalItems.ShouldBe(1);
+        result.TotalPages.ShouldBe(1);
+        result.Data.First().Descricao.ShouldBe("Transação 1");
+        result.Data.First().Valor.ShouldBe(100.50m);
+        result.Data.First().CategoriaId.ShouldBe(1);
+        result.Data.First().CategoriaNome.ShouldBe("Vendas");
+        result.Data.First().CategoriaTipo.ShouldBe("Receita");
+        _transacaoRepositoryMock.Verify(r => r.GetAllTransacoesAsync(dataInicio, dataFim, categoriaId, tipoCategoria, pageNumber, pageSize), Times.Once());
+        _loggerMock.VerifyLog(LogLevel.Information,
+            $"Consulta de transações realizada com sucesso. Total encontrado: 1, Total de itens: 1, Página: {pageNumber}, Tamanho da Página: {pageSize}, Tempo de execução:",
+            Times.Once());
     }
 
     [Fact]
     public async Task GetAllTransacoesAsync_NoTransacoes_ReturnsEmptyList()
     {
         // Arrange
-        _transacaoRepositoryMock.Setup(r => r.GetAllTransacoesAsync(null, null, null, null))
-            .ReturnsAsync(new List<Transacao>());
+        var pageNumber = 1;
+        var pageSize = 10;
+        var transacoes = new List<Transacao>();
+        _transacaoRepositoryMock.Setup(r => r.GetAllTransacoesAsync(null, null, null, null, pageNumber, pageSize))
+            .ReturnsAsync((transacoes, transacoes.Count));
 
         // Act
-        var result = (await _transacaoService.GetAllTransacoesAsync(null, null, null, null)).ToList();
+        var result = await _transacaoService.GetAllTransacoesAsync(null, null, null, null, pageNumber, pageSize);
 
         // Assert
         result.ShouldNotBeNull();
-        result.ShouldBeEmpty();
-        _transacaoRepositoryMock.Verify(r => r.GetAllTransacoesAsync(null, null, null, null), Times.Once());
-        _loggerMock.VerifyLog(LogLevel.Information, "Consultando todas as transações. Filtros: Nenhum filtro", Times.Once());
-        _loggerMock.VerifyLog(LogLevel.Information, "Consulta de transações realizada com sucesso. Total encontrado: 0, Tempo de execução:", Times.Once());
+        result.Data.ShouldNotBeNull();
+        result.Data.ShouldBeEmpty();
+        result.PageNumber.ShouldBe(pageNumber);
+        result.PageSize.ShouldBe(pageSize);
+        result.TotalItems.ShouldBe(0);
+        result.TotalPages.ShouldBe(0);
+        _transacaoRepositoryMock.Verify(r => r.GetAllTransacoesAsync(null, null, null, null, pageNumber, pageSize), Times.Once());
+        _loggerMock.VerifyLog(LogLevel.Information,
+            $"Consultando todas as transações. Filtros: Nenhum filtro, Página: {pageNumber}, Tamanho da Página: {pageSize}",
+            Times.Once());
+        _loggerMock.VerifyLog(LogLevel.Information,
+            $"Consulta de transações realizada com sucesso. Total encontrado: 0, Total de itens: 0, Página: {pageNumber}, Tamanho da Página: {pageSize}, Tempo de execução:",
+            Times.Once());
     }
 
     [Fact]
     public async Task GetAllTransacoesAsync_ThrowsException_ReturnsFailure()
     {
         // Arrange
-        _transacaoRepositoryMock.Setup(r => r.GetAllTransacoesAsync(null, null, null, null))
+        var pageNumber = 1;
+        var pageSize = 10;
+        _transacaoRepositoryMock.Setup(r => r.GetAllTransacoesAsync(null, null, null, null, pageNumber, pageSize))
             .ThrowsAsync(new Exception("Database error"));
 
         // Act & Assert
-        await Should.ThrowAsync<Exception>(async () => await _transacaoService.GetAllTransacoesAsync(null, null, null, null));
-        _transacaoRepositoryMock.Verify(r => r.GetAllTransacoesAsync(null, null, null, null), Times.Once());
+        await Should.ThrowAsync<Exception>(async () =>
+            await _transacaoService.GetAllTransacoesAsync(null, null, null, null, pageNumber, pageSize));
+        _transacaoRepositoryMock.Verify(r => r.GetAllTransacoesAsync(null, null, null, null, pageNumber, pageSize), Times.Once());
+        _loggerMock.VerifyLog(LogLevel.Information,
+            $"Consultando todas as transações. Filtros: Nenhum filtro, Página: {pageNumber}, Tamanho da Página: {pageSize}",
+            Times.Once());
+        _loggerMock.VerifyLog(LogLevel.Error,
+            $"Erro ao consultar transações. Filtros: Nenhum filtro, Página: {pageNumber}, Tamanho da Página: {pageSize}, Tempo decorrido:",
+            Times.Once());
     }
+
+    #endregion
 
     #region GetTransacaoByIdAsync
 
@@ -448,7 +491,7 @@ public class TransacaoServiceTests
     [Theory]
     [InlineData(0, "Transação", 100.50, "2025-08-01", 1, "O ID da transação é obrigatório.")]
     [InlineData(1, "", 100.50, "2025-08-01", 1, "A descrição da transação é obrigatória.")]
-    [InlineData(1, "Transação", 0, "2025-08-01", 1, "O valor da transação deve ser maior que zero.")]
+    [InlineData(1, "Transação", 0, "2025-08-01", 1, "O valor da transação deve be maior que zero.")]
     [InlineData(1, "Transação", 100.50, "2025-08-28", 0, "O ID da categoria é obrigatório e deve ser válido.")]
     public async Task UpdateTransacaoAsync_InvalidRequest_ReturnsValidationFailure(
         int id, string descricao, decimal valor, string data, int categoriaId, string expectedError)
