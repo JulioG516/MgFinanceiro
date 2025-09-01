@@ -15,7 +15,8 @@ public class CategoriaRepository : ICategoriaRepository
         _context = context;
     }
 
-    public async Task<IEnumerable<Categoria>> GetAllCategorias(TipoCategoria? tipoCategoria = null,
+    public async Task<(IEnumerable<Categoria>, int)> GetAllCategorias(int pageNumber, int pageSize,
+        TipoCategoria? tipoCategoria = null,
         bool? statusCategoriaAtivo = null)
     {
         var query = _context.Categorias
@@ -31,7 +32,21 @@ public class CategoriaRepository : ICategoriaRepository
             query = query.Where(c => c.Ativo == statusCategoriaAtivo.Value);
         }
 
-        return await query.ToListAsync();
+        int totalItems = await query.CountAsync();
+
+        query = query
+            .OrderBy(c => c.Id)
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize);
+
+        var categorias = await query.ToListAsync();
+
+        return (categorias, totalItems);
+    }
+
+    public async Task<bool> ExistsCategoriaAsync(string nome, TipoCategoria tipo)
+    {
+        return await _context.Categorias.AsNoTracking().AnyAsync(c => c.Nome == nome && c.Tipo == tipo);
     }
 
     public async Task<Categoria?> GetCategoriaByIdAsync(int id)

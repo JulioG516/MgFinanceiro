@@ -15,8 +15,8 @@ public class TransacaoRepository : ITransacaoRepository
         _context = context;
     }
 
-    public async Task<IEnumerable<Transacao>> GetAllTransacoesAsync(DateTime? dataInicio, DateTime? dataFim,
-        int? categoriaId, TipoCategoria? tipoCategoria)
+    public async Task<(IEnumerable<Transacao>, int)> GetAllTransacoesAsync(DateTime? dataInicio, DateTime? dataFim,
+        int? categoriaId, TipoCategoria? tipoCategoria, int pageNumber, int pageSize)
     {
         var query = _context.Transacoes
             .AsNoTracking()
@@ -42,8 +42,17 @@ public class TransacaoRepository : ITransacaoRepository
         {
             query = query.Where(t => t.Categoria!.Tipo == tipoCategoria.Value);
         }
+        
+        var totalItems = await query.CountAsync();
+        
+        query = query
+            .OrderBy(t => t.Id)
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize);
+        
+        var transacoes = await query.ToListAsync();
 
-        return await query.ToListAsync();
+        return (transacoes, totalItems);
     }
 
     public async Task<Transacao?> GetTransacaoByIdAsync(int id)
