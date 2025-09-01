@@ -7,10 +7,9 @@ namespace MgFinanceiro.Application.Interfaces;
 public interface ICategoriaService
 {
     Task<CategoriaResponseDto?> GetCategoriaByIdAsync(int id);
-
-    Task<IEnumerable<CategoriaResponseDto>> GetAllCategoriasAsync(TipoCategoria? tipoCategoria = null,
+    Task<PagedResponse<CategoriaResponseDto>> GetAllCategoriasAsync(int pageNumber, int pageSize,
+        TipoCategoria? tipoCategoria = null,
         bool? statusCategoriaAtivo = null);
-
     Task<Result<CategoriaResponseDto>> CreateCategoriaAsync(CreateCategoriaRequest request);
     Task<Result<CategoriaResponseDto>> UpdateCategoriaStatusAsync(int id, UpdateCategoriaStatusRequest request);
 }

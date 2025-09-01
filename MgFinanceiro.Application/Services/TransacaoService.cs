@@ -32,51 +32,64 @@ public class TransacaoService : ITransacaoService
         _logger = logger;
     }
 
-    public async Task<IEnumerable<TransacaoResponseDto>> GetAllTransacoesAsync(DateTime? dataInicio, DateTime? dataFim,
-        int? categoriaId, TipoCategoria? tipoCategoria)
+public async Task<PagedResponse<TransacaoResponseDto>> GetAllTransacoesAsync(
+    DateTime? dataInicio, 
+    DateTime? dataFim,
+    int? categoriaId, 
+    TipoCategoria? tipoCategoria, 
+    int pageNumber = 1, 
+    int pageSize = 10)
+{
+    var filtros = FormatarFiltrosLog(dataInicio, dataFim, categoriaId, tipoCategoria);
+    _logger.LogInformation("Consultando todas as transações. Filtros: {Filtros}, Página: {PageNumber}, Tamanho da Página: {PageSize}", 
+        filtros, pageNumber, pageSize);
+
+    var stopwatch = Stopwatch.StartNew();
+
+    try
     {
-        var filtros = FormatarFiltrosLog(dataInicio, dataFim, categoriaId, tipoCategoria);
-        _logger.LogInformation("Consultando todas as transações. Filtros: {Filtros}", filtros);
+        pageNumber = pageNumber < 1 ? 1 : pageNumber;
+        pageSize = pageSize < 1 ? 10 : pageSize;
+        pageSize = pageSize > 100 ? 100 : pageSize;
 
-        var stopwatch = Stopwatch.StartNew();
+        var (transacoes, totalItems) = await _transacaoRepository.GetAllTransacoesAsync(
+            dataInicio, dataFim, categoriaId, tipoCategoria, pageNumber, pageSize);
 
-        try
+        var transacoesList = transacoes.ToList();
+        var response = TransacaoMapper.TransacoesToTransacaoResponses(transacoesList).ToList();
+
+        stopwatch.Stop();
+
+        _logger.LogInformation("Consulta de transações realizada com sucesso. " +
+            "Total encontrado: {TotalTransacoes}, Total de itens: {TotalItems}, Página: {PageNumber}, " +
+            "Tamanho da Página: {PageSize}, Tempo de execução: {TempoMs}ms, Filtros: {Filtros}",
+            response.Count, totalItems, pageNumber, pageSize, stopwatch.ElapsedMilliseconds, filtros);
+
+        // Log de métricas financeiras
+        if (transacoesList.Any())
         {
-            var transacoes = await _transacaoRepository.GetAllTransacoesAsync(dataInicio, dataFim, categoriaId, tipoCategoria);
-            var transacoesList = transacoes.ToList();
-            var response = TransacaoMapper.TransacoesToTransacaoResponses(transacoesList).ToList();
+            var totalReceitas = transacoesList.Where(t => t.Categoria?.Tipo == TipoCategoria.Receita).Sum(t => t.Valor);
+            var totalDespesas = transacoesList.Where(t => t.Categoria?.Tipo == TipoCategoria.Despesa).Sum(t => t.Valor);
+            var saldo = totalReceitas - totalDespesas;
 
-            stopwatch.Stop();
-
-            _logger.LogInformation("Consulta de transações realizada com sucesso. " +
-                "Total encontrado: {TotalTransacoes}, Tempo de execução: {TempoMs}ms, Filtros: {Filtros}",
-                response.Count, stopwatch.ElapsedMilliseconds, filtros);
-
-            // Log de métricas financeiras
-            if (transacoesList.Any())
-            {
-                var totalReceitas = transacoesList.Where(t => t.Categoria?.Tipo == TipoCategoria.Receita).Sum(t => t.Valor);
-                var totalDespesas = transacoesList.Where(t => t.Categoria?.Tipo == TipoCategoria.Despesa).Sum(t => t.Valor);
-                var saldo = totalReceitas - totalDespesas;
-
-                _logger.LogInformation("Métricas das transações consultadas. " +
-                    "Total Receitas: {TotalReceitas:C}, Total Despesas: {TotalDespesas:C}, " +
-                    "Saldo: {Saldo:C}, Período: {Periodo}",
-                    totalReceitas, totalDespesas, saldo, 
-                    FormatarPeriodoLog(dataInicio, dataFim));
-            }
-
-            return response;
+            _logger.LogInformation("Métricas das transações consultadas. " +
+                "Total Receitas: {TotalReceitas:C}, Total Despesas: {TotalDespesas:C}, " +
+                "Saldo: {Saldo:C}, Período: {Periodo}",
+                totalReceitas, totalDespesas, saldo, 
+                FormatarPeriodoLog(dataInicio, dataFim));
         }
-        catch (Exception ex)
-        {
-            stopwatch.Stop();
-            _logger.LogError(ex, "Erro ao consultar transações. " +
-                "Filtros: {Filtros}, Tempo decorrido: {TempoMs}ms", 
-                filtros, stopwatch.ElapsedMilliseconds);
-            throw;
-        }
+
+        return new PagedResponse<TransacaoResponseDto>(response, pageNumber, pageSize, totalItems);
     }
+    catch (Exception ex)
+    {
+        stopwatch.Stop();
+        _logger.LogError(ex, "Erro ao consultar transações. " +
+            "Filtros: {Filtros}, Página: {PageNumber}, Tamanho da Página: {PageSize}, Tempo decorrido: {TempoMs}ms", 
+            filtros, pageNumber, pageSize, stopwatch.ElapsedMilliseconds);
+        throw;
+    }
+}
 
     public async Task<TransacaoResponseDto?> GetTransacaoByIdAsync(int id)
     {

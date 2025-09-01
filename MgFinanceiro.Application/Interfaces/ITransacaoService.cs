@@ -6,9 +6,8 @@ namespace MgFinanceiro.Application.Interfaces;
 
 public interface ITransacaoService
 {
-    Task<IEnumerable<TransacaoResponseDto>> GetAllTransacoesAsync(DateTime? dataInicio, DateTime? dataFim,
-        int? categoriaId, TipoCategoria? tipoCategoria);
-
+    Task<PagedResponse<TransacaoResponseDto>> GetAllTransacoesAsync(DateTime? dataInicio, DateTime? dataFim,
+        int? categoriaId, TipoCategoria? tipoCategoria, int pageNumber = 1, int pageSize = 10);
     Task<TransacaoResponseDto?> GetTransacaoByIdAsync(int id);
     Task<Result<TransacaoResponseDto>> CreateTransacaoAsync(CreateTransacaoRequest request);
     Task<Result> UpdateTransacaoAsync(UpdateTransacaoRequest request);
