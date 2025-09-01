@@ -97,7 +97,7 @@ public class RelatoriosController : ControllerBase
     /// <response code="200">Retorna o arquivo PDF ou Excel com o resumo das transações.</response>
     /// <response code="400">Retorna erros de validação, formato inválido ou falha na geração do arquivo.</response>
     /// <response code="401">Acesso não autorizado.</response>
-    [HttpPost("resumo/export")]
+    [HttpGet("resumo/export")]
     [SwaggerOperation(
         Summary = "Exporta um resumo de transações",
         Description = "Gera e retorna um arquivo com o resumo de transações no formato PDF ou Excel para o período especificado.",
@@ -139,7 +139,7 @@ public class RelatoriosController : ControllerBase
     /// <response code="200">Retorna o arquivo PDF ou Excel com as transações por categoria.</response>
     /// <response code="400">Retorna erros de validação, formato inválido ou falha na geração do arquivo.</response>
     /// <response code="401">Acesso não autorizado.</response>
-    [HttpPost("por-categoria/export")]
+    [HttpGet("por-categoria/export")]
     [SwaggerOperation(
         Summary = "Exporta transações por categoria",
         Description = "Gera e retorna um arquivo com transações agrupadas por categoria no formato PDF ou Excel para o período especificado.",
