@@ -1,5 +1,6 @@
 ﻿using MgFinanceiro.Application.DTOs.Categoria;
 using MgFinanceiro.Application.Interfaces;
+using MgFinanceiro.Domain.Common;
 using MgFinanceiro.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -44,29 +45,33 @@ public class CategoriasController : ControllerBase
     }
 
     /// <summary>
-    /// Retorna todas as categorias cadastradas.
+    /// Retorna todas as categorias cadastradas com suporte a paginação.
     /// </summary>
     /// <param name="tipoCategoria">Filtra pelo tipo da categoria: 1 - Receita ou 2 - Despesa.</param>
-    /// <param name="statusCategoriaAtivo"></param>
-    /// <returns>Lista de categorias.</returns>
+    /// <param name="statusCategoriaAtivo">Filtra por status da categoria: true (ativas), false (inativas) ou null (todas).</param>
+    /// <param name="pageNumber">Número da página a ser retornada (mínimo 1, padrão: 1).</param>
+    /// <param name="pageSize">Quantidade de itens por página (mínimo 1, padrão: 10, máximo: 100).</param>
+    /// <returns>Lista paginada de categorias com metadados de paginação.</returns>
     [HttpGet]
     [SwaggerOperation(
         Summary = "Listar categorias",
-        Description =
-            "Retorna todas as categorias cadastradas. Pode ser filtrado por tipo (1 - Receita ou 2 - Despesa)."
+        Description = "Retorna todas as categorias cadastradas com suporte a paginação. " +
+                      "Pode ser filtrado por tipo (1 - Receita ou 2 - Despesa) e status (ativas ou inativas). " +
+                      "Os parâmetros de paginação permitem controlar o número da página e o tamanho da página."
     )]
-    [ProducesResponseType(typeof(IEnumerable<CategoriaResponseDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(PagedResponse<CategoriaResponseDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetAll(
-        [FromQuery, SwaggerParameter("Tipo da categoria para filtro: 1 (Receita) ou 2 (Despesa).",
-             Required = false)]
+        [FromQuery, SwaggerParameter("Tipo da categoria para filtro: 1 (Receita) ou 2 (Despesa).", Required = false)]
         TipoCategoria? tipoCategoria,
-        [FromQuery,
-         SwaggerParameter(
-             "Define se devem ser retornadas apenas categorias ativas (true) ou apenas inativas (false). Se não informado, retorna todas.",
-             Required = false)]
-        bool? statusCategoriaAtivo)
+        [FromQuery, SwaggerParameter("Define se devem ser retornadas apenas categorias ativas (true) ou inativas (false). Se não informado, retorna todas.", Required = false)]
+        bool? statusCategoriaAtivo,
+        [FromQuery, SwaggerParameter("Número da página a ser retornada (mínimo 1, padrão: 1).", Required = false)]
+        int pageNumber = 1,
+        [FromQuery, SwaggerParameter("Quantidade de itens por página (mínimo 1, padrão: 10, máximo: 100).", Required = false)]
+        int pageSize = 10)
     {
-        var categorias = await _categoriaService.GetAllCategoriasAsync(tipoCategoria, statusCategoriaAtivo);
+        var categorias = await _categoriaService.GetAllCategoriasAsync(pageNumber, pageSize, tipoCategoria, statusCategoriaAtivo);
         return Ok(categorias);
     }
 

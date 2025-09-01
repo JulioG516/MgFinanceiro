@@ -1,5 +1,6 @@
 ﻿using MgFinanceiro.Application.DTOs.Transacao;
 using MgFinanceiro.Application.Interfaces;
+using MgFinanceiro.Domain.Common;
 using MgFinanceiro.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -21,21 +22,25 @@ public class TransacoesController : ControllerBase
     }
 
     /// <summary>
-    /// Retorna todas as transações cadastradas.
+    /// Retorna todas as transações cadastradas com suporte a paginação.
     /// </summary>
     /// <param name="dataInicio">Data inicial para filtro (formato ISO 8601, ex.: 2025-08-01T00:00:00Z).</param>
     /// <param name="dataFim">Data final para filtro (formato ISO 8601, ex.: 2025-08-31T23:59:59Z).</param>
     /// <param name="categoriaId">ID da categoria para filtro.</param>
     /// <param name="tipoCategoria">Tipo da categoria: 1 - Receita ou 2 - Despesa.</param>
-    /// <returns>Lista de transações.</returns>
+    /// <param name="pageNumber">Número da página a ser retornada (mínimo 1, padrão: 1).</param>
+    /// <param name="pageSize">Quantidade de itens por página (mínimo 1, padrão: 10, máximo: 100).</param>
+    /// <returns>Lista paginada de transações com metadados de paginação.</returns>
     [HttpGet]
     [SwaggerOperation(
         Summary = "Listar transações",
-        Description =
-            "Retorna todas as transações cadastradas. Pode ser filtrado por período (dataInicio e dataFim), categoria (categoriaId) e tipo de categoria (1 - Receita ou 2 - Despesa)."
+        Description = "Retorna todas as transações cadastradas com suporte a paginação. " +
+                      "Pode ser filtrado por período (dataInicio e dataFim), categoria (categoriaId) e tipo de categoria (1 - Receita ou 2 - Despesa). " +
+                      "Os parâmetros de paginação permitem controlar o número da página e o tamanho da página."
     )]
-    [ProducesResponseType(typeof(IEnumerable<TransacaoResponseDto>), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(PagedResponse<TransacaoResponseDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(string), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(string), StatusCodes.Status500InternalServerError)]
     public async Task<IActionResult> GetAll(
         [FromQuery,
          SwaggerParameter("Data inicial para filtro das transações (formato ISO 8601, ex.: 2025-08-01T00:00:00Z).",
@@ -48,9 +53,15 @@ public class TransacoesController : ControllerBase
         [FromQuery, SwaggerParameter("ID da categoria para filtro das transações.", Required = false)]
         int? categoriaId,
         [FromQuery, SwaggerParameter("Tipo da categoria para filtro: 1 (Receita) ou 2 (Despesa).", Required = false)]
-        TipoCategoria? tipoCategoria)
+        TipoCategoria? tipoCategoria,
+        [FromQuery, SwaggerParameter("Número da página a ser retornada (mínimo 1, padrão: 1).", Required = false)]
+        int pageNumber = 1,
+        [FromQuery,
+         SwaggerParameter("Quantidade de itens por página (mínimo 1, padrão: 10, máximo: 100).", Required = false)]
+        int pageSize = 10)
     {
-        var transacoes = await _transacaoService.GetAllTransacoesAsync(dataInicio, dataFim, categoriaId, tipoCategoria);
+        var transacoes = await _transacaoService.GetAllTransacoesAsync(dataInicio, dataFim, categoriaId, tipoCategoria,
+            pageNumber, pageSize);
         return Ok(transacoes);
     }
 
